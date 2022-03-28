@@ -75,17 +75,40 @@ char *unbounded_int2string(unbounded_int i){
   return res;
 }
 
-void test(long long i){
-  i = (i<0)?-i:i;
-  while(i != 0){
-    printf("%c %lld \n",i%10+'0',i);
-    i = i/10;
+int unbounded_int_cmp_unbounded_int(unbounded_int a, unbounded_int b){
+  if(a.signe == '*'){
+    return (b.signe == '*')?0:1;
   }
+  else if(b.signe == '*')
+    return -1;
+
+  if(a.len > b.len){
+    return (a.signe == '+')?1:-1;
+  }
+  if(b.len > a.len){
+    return (b.signe == '+')?-1:1;
+  }
+
+  chiffre* a_current = a.premier;
+  chiffre* b_current = b.premier;
+
+  while(a_current != NULL){
+    if(a_current->c > b_current->c){
+      return (a.signe=='-')?-1:1;
+    }
+    else if(a_current->c < b_current->c){
+      return (b.signe=='-')?1:-1;
+    }
+    a_current = a_current->suivant;
+    b_current = b_current->suivant;
+  }
+  return 0;
 }
+
 
 int main(){
 
-  unbounded_int a = string2unbounded("234z");
+  unbounded_int a = string2unbounded_int("-634");
   char* char_a = unbounded_int2string(a);
   printf("%s\n",char_a);
 
@@ -93,5 +116,11 @@ int main(){
   char* char_b = unbounded_int2string(b);
   printf("%s\n",char_b);
 
+  unbounded_int c = string2unbounded_int("524");
+
+  printf("%d\n",unbounded_int_cmp_unbounded_int(a,b));
+  printf("%d\n",unbounded_int_cmp_unbounded_int(b,b));
+  printf("%d\n",unbounded_int_cmp_unbounded_int(b,a));
+  printf("%d\n",unbounded_int_cmp_unbounded_int(a,c));
   return 0;
 }
