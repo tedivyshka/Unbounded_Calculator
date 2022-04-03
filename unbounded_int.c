@@ -32,7 +32,7 @@ unbounded_int string2unbounded_int(const char *e){
     count+=1;
   }
   res.dernier = current;
-  res.len = count;
+  res.len = (res.signe == '-')?count-1:count;
   return res;
 }
 
@@ -43,14 +43,14 @@ unbounded_int ll2unbounded_int(long long i) {
     int count = 0;
 
     chiffre* current = malloc(sizeof(chiffre));
-    current->c = (i%10) + '0';
+    current->c = (char)((i%10) + '0');
     res.dernier = current;
     i = i/10;
     count += 1;
 
     while(i != 0){
       chiffre* precedent = malloc(sizeof(chiffre));
-      precedent->c = (i%10) + '0';
+      precedent->c = (char)((i%10) + '0');
       current->precedent = precedent;
       precedent->suivant = current;
       current = precedent;
@@ -77,9 +77,14 @@ char *unbounded_int2string(unbounded_int i){
 
 int unbounded_int_cmp_unbounded_int(unbounded_int a, unbounded_int b){
   if(a.signe == '*'){
-    return (b.signe == '*')?0:1;
+    return (b.signe == '*')?0:-1;
   }
   else if(b.signe == '*')
+    return 1;
+
+  if(a.signe == '+' && b.signe == '-')
+    return 1;
+  if(a.signe == '-' && b.signe == '+')
     return -1;
 
   if(a.len > b.len){
@@ -104,8 +109,44 @@ int unbounded_int_cmp_unbounded_int(unbounded_int a, unbounded_int b){
   }
   return 0;
 }
-int unbounded_int_cmp_ll(unbounded_int a,long long b){
-    unbounded_int c =ll2unbounded_int(b);
-    return unbounded_int_cmp_unbounded_int(a,c);
-}
 
+int unbounded_int_cmp_ll(unbounded_int a, long long b) {
+  if(a.signe == '*'){
+    return -1;
+  }
+  if(a.signe == '+' && b < 0)
+    return 1;
+  if(a.signe == '-' && b >= 0)
+    return -1;
+
+  long long temp = b;
+  int nbDigits_b = 0;
+  while(temp!=0){
+     temp=temp/10;
+     nbDigits_b++;
+  }
+
+  if(a.len > nbDigits_b){
+    return (a.signe == '+')?1:-1;
+  }
+  if(nbDigits_b > a.len){
+    return (b>0)?-1:1;
+  }
+
+  chiffre* a_current = a.dernier;
+  long long b_current = (b<0)?-b:b;
+
+  int res = 0;
+
+  while(a_current != NULL){
+    if(a_current->c-'0' > b_current%10){
+      res = (a.signe=='-')?-1:1;
+    }
+    else if(a_current->c-'0' < b_current%10){
+      res = (b<0)?1:-1;
+    }
+    a_current = a_current->precedent;
+    b_current /= 10;
+  }
+  return res;
+}

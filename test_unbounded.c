@@ -9,18 +9,18 @@ static void affiche_unbounded_int(unbounded_int a){
     printf("%c",a.premier->c);
     while(tmp!=NULL){
         printf("%c",tmp->c);
-       
+
         if(tmp==a.dernier){
             break;
         }
          tmp=tmp->suivant;
-        
+
     }
     printf("\n");
-    
+
 }
 static void test(){
-   
+
     unbounded_int a = string2unbounded_int("-634");
     printf("a = ");
     affiche_unbounded_int(a);
@@ -41,19 +41,19 @@ static void test(){
     int t= unbounded_int_cmp_unbounded_int(a,a);
     printf("t = %d\n",t);
 
-     
+
 
 }
 
 int main(){
     test();
 
- 
 
- 
- 
-  
 
- 
+
+
+
+
+
   return 0;
 }
