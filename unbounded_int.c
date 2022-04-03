@@ -104,23 +104,8 @@ int unbounded_int_cmp_unbounded_int(unbounded_int a, unbounded_int b){
   }
   return 0;
 }
-
-
-int main(){
-
-  unbounded_int a = string2unbounded_int("-634");
-  char* char_a = unbounded_int2string(a);
-  printf("%s\n",char_a);
-
-  unbounded_int b = ll2unbounded_int(-239424923948);
-  char* char_b = unbounded_int2string(b);
-  printf("%s\n",char_b);
-
-  unbounded_int c = string2unbounded_int("524");
-
-  printf("%d\n",unbounded_int_cmp_unbounded_int(a,b));
-  printf("%d\n",unbounded_int_cmp_unbounded_int(b,b));
-  printf("%d\n",unbounded_int_cmp_unbounded_int(b,a));
-  printf("%d\n",unbounded_int_cmp_unbounded_int(a,c));
-  return 0;
+int unbounded_int_cmp_ll(unbounded_int a,long long b){
+    unbounded_int c =ll2unbounded_int(b);
+    return unbounded_int_cmp_unbounded_int(a,c);
 }
+
