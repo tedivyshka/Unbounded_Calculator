@@ -1,6 +1,22 @@
+// Online C compiler to run C program online
+// Online C compiler to run C program online
+#include <stdio.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "unbounded_int.h"
+#include <stdbool.h>
+
+typedef struct chiffre{
+  struct chiffre *suivant;
+  char c;
+  struct chiffre *precedent;
+} chiffre;
+
+typedef struct{
+  char signe;
+  size_t len ;
+  chiffre *premier;
+  chiffre *dernier;
+} unbounded_int;
 
 
 unbounded_int string2unbounded_int(const char *e){
@@ -243,6 +259,33 @@ static unbounded_int diff(unbounded_int a,unbounded_int b){
     return res;
 }
 
+static int Max(unbounded_int a,unbounded_int b){
+ 
+  if(a.len<b.len){
+    return 0;
+  }
+  if(a.len>b.len){
+    return 1;
+  }
+  if(a.len==b.len){
+    chiffre *tmp1 =a.premier;
+    chiffre *tmp2=b.premier;
+    while(tmp1!=NULL && tmp2!=NULL){
+      if(tmp1->c>tmp2->c){
+      return 1;
+      }
+     if(tmp1->c<tmp2->c){
+      return 0;
+      }
+      if(tmp1->c==tmp2->c){
+        tmp1=tmp1->suivant;
+        tmp2=tmp2->suivant;
+      }
+    }
+  }
+    return -1;
+
+}
 unbounded_int unbounded_int_somme(unbounded_int a, unbounded_int b){
       if(a.signe=='+' && b.signe=='+'){
         return somme(a,b);
@@ -252,11 +295,84 @@ unbounded_int unbounded_int_somme(unbounded_int a, unbounded_int b){
         c.signe='-';
         return c;
       }
-      if(a.signe=='+' && b.signe=='-'){
-          return diff(a,b);
-      }
+      if(a.signe=='+' && b.signe=='-') {
+            if((Max(a,b)==1) || (Max(a,b)==-1)){
+                    return diff(a,b);
+            }else{
+                
+                unbounded_int c= diff(b,a);
+                c.signe='-';
+                return c;
+            }
+        }
       if(a.signe=='-' && b.signe=='+'){
+        if((Max(a,b)==1) || (Max(a,b)==-1)){
+                unbounded_int c= diff(a,b);
+                c.signe='-';
+                return c;
+        }else{
           return diff(b,a);
-      }
+        }
+         
+      }  
 }
+unbounded_int unbounded_int_difference( unbounded_int a, unbounded_int b){  
+        if(a.signe=='+' && b.signe=='+'){
+            if((Max(a,b)==1)||(Max(a,b)==-1)){
+                 return diff(a,b);
+            }else{
+                 unbounded_int c=diff(b,a);
+                 c.signe='-';
+                 return c;
+            }
+           
+        }
+        if(a.signe=='-' && b.signe=='-'){
+           if((Max(a,b)==1)||(Max(a,b)==-1)){
+                 return diff(a,b);
+            }else{
+                 unbounded_int c=diff(b,a);
+                 c.signe='+';
+                 return c;
+            }
+        }
+        if(a.signe=='+' && b.signe=='-'){
+            return somme(a,b);
+           /*  if((Max(a,b)==1)||(Max(a,b)==-1)){
+                 return diff(a,b);
+            }else{
+                 unbounded_int c=diff(b,a);
+                 c.signe='-';
+                 return c;
+            }*/
+         
+        }
+        if(a.signe=='-' && b.signe=='+'){
+            unbounded_int c=somme(a,b);
+            c.signe='-';
+            return c;
+           /*if((Max(a,b)==1)||(Max(a,b)==-1)){
+                unbounded_int c=diff(a,b);
+                 c.signe='-';
+                 return c;
+                
+            }else{
+                 return diff(b,a);
+            }*/
+        }
 
+    }
+      
+ 
+
+int main() {
+    unbounded_int a = string2unbounded_int("465");
+    unbounded_int b = string2unbounded_int("1000");
+    unbounded_int c = unbounded_int_difference(a, b);
+
+    printf("a = %s\n", unbounded_int2string(a));
+    printf("b = %s\n", unbounded_int2string(b));
+    printf("c = %s\n", unbounded_int2string(c));
+    
+    return 0;
+}
