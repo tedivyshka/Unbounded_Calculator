@@ -326,27 +326,14 @@ unbounded_int unbounded_int_difference( unbounded_int a, unbounded_int b){
         }
         if(a.signe=='+' && b.signe=='-'){
             return somme(a,b);
-           /*  if((Max(a,b)==1)||(Max(a,b)==-1)){
-                 return diff(a,b);
-            }else{
-                 unbounded_int c=diff(b,a);
-                 c.signe='-';
-                 return c;
-            }*/
+          
          
         }
         if(a.signe=='-' && b.signe=='+'){
             unbounded_int c=somme(a,b);
             c.signe='-';
             return c;
-           /*if((Max(a,b)==1)||(Max(a,b)==-1)){
-                unbounded_int c=diff(a,b);
-                 c.signe='-';
-                 return c;
-                
-            }else{
-                 return diff(b,a);
-            }*/
+          
         }
 
     }
