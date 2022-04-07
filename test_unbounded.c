@@ -3,7 +3,7 @@
 //#include "unbounded_int.h"
 #include "unbounded_int.c"
 
-static void affiche_unbounded_int(unbounded_int a){
+/*static void affiche_unbounded_int(unbounded_int a){
     printf("%c",a.signe);
     chiffre *tmp=a.premier->suivant;
     printf("%c",a.premier->c);
@@ -57,3 +57,4 @@ int main(){
 
   return 0;
 }
+*/

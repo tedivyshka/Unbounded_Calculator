@@ -1,22 +1,10 @@
-// Online C compiler to run C program online
-// Online C compiler to run C program online
+
 #include <stdio.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include "unbounded_int.h"
 
-typedef struct chiffre{
-  struct chiffre *suivant;
-  char c;
-  struct chiffre *precedent;
-} chiffre;
-
-typedef struct{
-  char signe;
-  size_t len ;
-  chiffre *premier;
-  chiffre *dernier;
-} unbounded_int;
 
 
 unbounded_int string2unbounded_int(const char *e){
