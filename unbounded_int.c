@@ -150,3 +150,113 @@ int unbounded_int_cmp_ll(unbounded_int a, long long b) {
   }
   return res;
 }
+
+
+static void ajoutDebut(unbounded_int * res, chiffre * current){
+    if(res->len == 0) {
+        res->premier = current;
+        res->dernier = current;
+    }else {
+        current->suivant = res->premier;
+        res->premier->precedent = current;
+        res->premier = current;
+    }
+    res->len = res->len + 1;
+}
+
+static unbounded_int somme(unbounded_int a,unbounded_int b){
+    unbounded_int res;
+    res.len = 0;
+    res.signe = '+';
+    int len = 0, r = 0;
+
+    chiffre * tmp1=a.dernier;
+    chiffre * tmp2=b.dernier;
+
+    while(tmp1!= NULL || tmp2 != NULL){
+        int m=0, n = 0;
+        if(tmp1 != NULL) {
+            m = tmp1->c - '0';
+            tmp1 = tmp1->precedent;
+        }
+        if(tmp2 != NULL) {
+            n = tmp2->c - '0';
+            tmp2 = tmp2->precedent;
+        }
+
+        chiffre* current = malloc(sizeof(chiffre));
+        current->c = (m+n+r)%10 + '0';
+        r=(m+n+r)/10;
+
+        ajoutDebut(&res, current);
+    }
+
+    if(r > 0){
+        chiffre* current = malloc(sizeof(chiffre));
+        current->c = r + '0';
+        ajoutDebut(&res, current);
+    }
+
+    return res;
+}
+static unbounded_int diff(unbounded_int a,unbounded_int b){
+    unbounded_int res;
+    res.len = 0;
+    res.signe = '+';
+    int len = 0, r = 0;
+
+    chiffre * tmp1=a.dernier;
+    chiffre * tmp2=b.dernier;
+
+    while(tmp1!= NULL || tmp2 != NULL){
+        int m=0, n = 0;
+        if(tmp1 != NULL) {
+            m = tmp1->c - '0';
+            tmp1 = tmp1->precedent;
+        }
+        if(tmp2 != NULL) {
+            n = tmp2->c - '0';
+            tmp2 = tmp2->precedent;
+        }
+
+        chiffre* current = malloc(sizeof(chiffre));
+        int g=m-n+r;
+        if(g>=0){
+           current->c = (m-n+r)+ '0';
+           r=0;
+        }else{
+           current->c = (m-n+r+10) + '0';
+           r=-1;
+        }
+       
+       
+        
+        ajoutDebut(&res, current);
+    }
+
+    if(r > 0){
+        chiffre* current = malloc(sizeof(chiffre));
+        current->c = r + '0';
+        ajoutDebut(&res, current);
+    }
+
+    return res;
+}
+
+unbounded_int unbounded_int_somme(unbounded_int a, unbounded_int b){
+      if(a.signe=='+' && b.signe=='+'){
+        return somme(a,b);
+      }
+      if(a.signe=='-' && b.signe=='-'){
+        unbounded_int c=somme(a,b);
+        c.signe='-';
+        return c;
+      }
+      if(a.signe=='+' && b.signe=='-'){
+          return diff(a,b);
+      }
+      if(a.signe=='-' && b.signe=='+'){
+          return diff(b,a);
+      }
+}
+
