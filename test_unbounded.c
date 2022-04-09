@@ -3,7 +3,7 @@
 //#include "unbounded_int.h"
 #include "unbounded_int.c"
 
-/*static void affiche_unbounded_int(unbounded_int a){
+static void affiche_unbounded_int(unbounded_int a){
     printf("%c",a.signe);
     chiffre *tmp=a.premier->suivant;
     printf("%c",a.premier->c);
@@ -40,6 +40,12 @@ static void test(){
     printf("z = %d\n",z);
     int t= unbounded_int_cmp_unbounded_int(a,a);
     printf("t = %d\n",t);
+    unbounded_int n = unbounded_int_somme(a,c);
+    printf(" somme = ");
+    affiche_unbounded_int(n);
+    unbounded_int n = unbounded_int_difference(a,c);
+    printf("diff = ");
+    affiche_unbounded_int(n);
 
 
 
@@ -47,14 +53,5 @@ static void test(){
 
 int main(){
     test();
-
-
-
-
-
-
-
-
-  return 0;
+return 0;
 }
-*/

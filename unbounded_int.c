@@ -315,9 +315,11 @@ unbounded_int unbounded_int_difference( unbounded_int a, unbounded_int b){
             }
            
         }
-        if(a.signe=='-' && b.signe=='-'){
+          if(a.signe=='-' && b.signe=='-'){
            if((Max(a,b)==1)||(Max(a,b)==-1)){
-                 return diff(a,b);
+               unbounded_int c=diff(a,b);
+                 c.signe='-';
+                 return c;
             }else{
                  unbounded_int c=diff(b,a);
                  c.signe='+';
@@ -340,14 +342,3 @@ unbounded_int unbounded_int_difference( unbounded_int a, unbounded_int b){
       
  
 
-int main() {
-    unbounded_int a = string2unbounded_int("465");
-    unbounded_int b = string2unbounded_int("1000");
-    unbounded_int c = unbounded_int_difference(a, b);
-
-    printf("a = %s\n", unbounded_int2string(a));
-    printf("b = %s\n", unbounded_int2string(b));
-    printf("c = %s\n", unbounded_int2string(c));
-    
-    return 0;
-}
