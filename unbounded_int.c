@@ -246,6 +246,17 @@ static unbounded_int diff(unbounded_int a,unbounded_int b){
 
     return res;
 }
+static unbounded_int Vrai_unbounded(unbounded_int a){
+   chiffre * l;
+    while(a.premier->c=='0'){
+       
+          a.len--;
+        l=a.premier;
+        a.premier=l->suivant;
+      
+    }
+  return a;
+}
 
 static int Max(unbounded_int a,unbounded_int b){
  
@@ -276,30 +287,30 @@ static int Max(unbounded_int a,unbounded_int b){
 }
 unbounded_int unbounded_int_somme(unbounded_int a, unbounded_int b){
       if(a.signe=='+' && b.signe=='+'){
-        return somme(a,b);
+         return Vrai_unbounded(somme(a,b));
       }
       if(a.signe=='-' && b.signe=='-'){
         unbounded_int c=somme(a,b);
         c.signe='-';
-        return c;
+        return Vrai_unbounded(c);
       }
       if(a.signe=='+' && b.signe=='-') {
             if((Max(a,b)==1) || (Max(a,b)==-1)){
-                    return diff(a,b);
+                return Vrai_unbounded(      diff(a,b));
             }else{
                 
                 unbounded_int c= diff(b,a);
                 c.signe='-';
-                return c;
+              return Vrai_unbounded(c);
             }
         }
       if(a.signe=='-' && b.signe=='+'){
         if((Max(a,b)==1) || (Max(a,b)==-1)){
                 unbounded_int c= diff(a,b);
                 c.signe='-';
-                return c;
+              return Vrai_unbounded(c);
         }else{
-          return diff(b,a);
+          return Vrai_unbounded(diff(b,a));
         }
          
       }  
@@ -307,38 +318,40 @@ unbounded_int unbounded_int_somme(unbounded_int a, unbounded_int b){
 unbounded_int unbounded_int_difference( unbounded_int a, unbounded_int b){  
         if(a.signe=='+' && b.signe=='+'){
             if((Max(a,b)==1)||(Max(a,b)==-1)){
-                 return diff(a,b);
+                return Vrai_unbounded(diff(a,b));
             }else{
                  unbounded_int c=diff(b,a);
                  c.signe='-';
-                 return c;
+                 return Vrai_unbounded(c);
+                 //return c;
             }
            
         }
-          if(a.signe=='-' && b.signe=='-'){
+        if(a.signe=='-' && b.signe=='-'){
            if((Max(a,b)==1)||(Max(a,b)==-1)){
                unbounded_int c=diff(a,b);
                  c.signe='-';
-                 return c;
+                  return Vrai_unbounded(c);
+                 //return c;
             }else{
                  unbounded_int c=diff(b,a);
                  c.signe='+';
-                 return c;
+                  return Vrai_unbounded(c);
+                 //return c;
             }
         }
         if(a.signe=='+' && b.signe=='-'){
-            return somme(a,b);
+            return Vrai_unbounded(somme(a,b));
           
          
         }
         if(a.signe=='-' && b.signe=='+'){
             unbounded_int c=somme(a,b);
             c.signe='-';
-            return c;
+          return Vrai_unbounded(c);
           
         }
 
     }
+    
       
- 
-
