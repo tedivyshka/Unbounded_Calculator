@@ -246,6 +246,17 @@ static unbounded_int diff(unbounded_int a,unbounded_int b){
 
     return res;
 }
+static unbounded_int Vrai_unbounded(unbounded_int a){
+   chiffre * l;
+    while(a.premier->c=='0'){
+       
+          a.len--;
+        l=a.premier;
+        a.premier=l->suivant;
+      
+    }
+  return a;
+}
 
 static int Max(unbounded_int a,unbounded_int b){
  
@@ -276,30 +287,30 @@ static int Max(unbounded_int a,unbounded_int b){
 }
 unbounded_int unbounded_int_somme(unbounded_int a, unbounded_int b){
       if(a.signe=='+' && b.signe=='+'){
-        return somme(a,b);
+         return Vrai_unbounded(somme(a,b));
       }
       if(a.signe=='-' && b.signe=='-'){
         unbounded_int c=somme(a,b);
         c.signe='-';
-        return c;
+        return Vrai_unbounded(c);
       }
       if(a.signe=='+' && b.signe=='-') {
             if((Max(a,b)==1) || (Max(a,b)==-1)){
-                    return diff(a,b);
+                return Vrai_unbounded(      diff(a,b));
             }else{
                 
                 unbounded_int c= diff(b,a);
                 c.signe='-';
-                return c;
+              return Vrai_unbounded(c);
             }
         }
       if(a.signe=='-' && b.signe=='+'){
         if((Max(a,b)==1) || (Max(a,b)==-1)){
                 unbounded_int c= diff(a,b);
                 c.signe='-';
-                return c;
+              return Vrai_unbounded(c);
         }else{
-          return diff(b,a);
+          return Vrai_unbounded(diff(b,a));
         }
          
       }  
@@ -307,47 +318,40 @@ unbounded_int unbounded_int_somme(unbounded_int a, unbounded_int b){
 unbounded_int unbounded_int_difference( unbounded_int a, unbounded_int b){  
         if(a.signe=='+' && b.signe=='+'){
             if((Max(a,b)==1)||(Max(a,b)==-1)){
-                 return diff(a,b);
+                return Vrai_unbounded(diff(a,b));
             }else{
                  unbounded_int c=diff(b,a);
                  c.signe='-';
-                 return c;
+                 return Vrai_unbounded(c);
+                 //return c;
             }
            
         }
         if(a.signe=='-' && b.signe=='-'){
            if((Max(a,b)==1)||(Max(a,b)==-1)){
-                 return diff(a,b);
+               unbounded_int c=diff(a,b);
+                 c.signe='-';
+                  return Vrai_unbounded(c);
+                 //return c;
             }else{
                  unbounded_int c=diff(b,a);
                  c.signe='+';
-                 return c;
+                  return Vrai_unbounded(c);
+                 //return c;
             }
         }
         if(a.signe=='+' && b.signe=='-'){
-            return somme(a,b);
+            return Vrai_unbounded(somme(a,b));
           
          
         }
         if(a.signe=='-' && b.signe=='+'){
             unbounded_int c=somme(a,b);
             c.signe='-';
-            return c;
+          return Vrai_unbounded(c);
           
         }
 
     }
-      
- 
-
-int main() {
-    unbounded_int a = string2unbounded_int("465");
-    unbounded_int b = string2unbounded_int("1000");
-    unbounded_int c = unbounded_int_difference(a, b);
-
-    printf("a = %s\n", unbounded_int2string(a));
-    printf("b = %s\n", unbounded_int2string(b));
-    printf("c = %s\n", unbounded_int2string(c));
     
-    return 0;
-}
+      
