@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-//#include "unbounded_int.h"
-#include "unbounded_int.c"
+#include "unbounded_int.h"
+
 
 static void affiche_unbounded_int(unbounded_int a){
     printf("%c",a.signe);
@@ -24,7 +24,7 @@ static void test(){
     unbounded_int a = string2unbounded_int("-634");
     printf("a = ");
     affiche_unbounded_int(a);
-    unbounded_int b = ll2unbounded_int(-239424923948);
+    unbounded_int b = string2unbounded_int("200");
     printf("b = ");
     affiche_unbounded_int(b);
     unbounded_int c = string2unbounded_int("-414");
@@ -43,9 +43,9 @@ static void test(){
     unbounded_int n = unbounded_int_somme(a,c);
     printf(" somme = ");
     affiche_unbounded_int(n);
-    unbounded_int n = unbounded_int_difference(a,c);
+    unbounded_int g = unbounded_int_difference(a,c);
     printf("diff = ");
-    affiche_unbounded_int(n);
+    affiche_unbounded_int(g);
 
 
 

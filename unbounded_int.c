@@ -353,5 +353,56 @@ unbounded_int unbounded_int_difference( unbounded_int a, unbounded_int b){
         }
 
     }
+chiffre * newChiffre(char c){
+    chiffre* res = malloc(sizeof(chiffre));
+    res->c = c;
+    return res;
+}
+
+static unbounded_int multiplication(unbounded_int a,unbounded_int b){
+    unbounded_int res;
+    res.len = 0;
+    res.signe = '+';
+    int r = 0, m, n;
+    int nombreDeZeros = 0, i;
     
-      
+    chiffre * tmp2=b.dernier;
+    
+    while(tmp2 != NULL){
+        chiffre * tmp1=a.dernier;
+        unbounded_int line;
+        line.signe = '+';
+        line.len = 0;
+        r = 0;
+        m = tmp2->c - '0';
+        
+        if(m == 0){
+            nombreDeZeros++;
+            tmp2 = tmp2->precedent;
+            continue;
+        }
+        
+        for(i = 0; i < nombreDeZeros; i++)
+            ajoutDebut(&line, newChiffre('0'));
+        
+        while(tmp1 != NULL){
+            n = tmp1->c - '0';
+            
+            ajoutDebut(&line, newChiffre((m*n+r)%10 + '0'));
+            r=(m*n+r)/10;
+            
+            tmp1 = tmp1->precedent;
+        }
+        
+        if(r > 0)
+            ajoutDebut(&line, newChiffre(r + '0'));
+        
+        
+        res = res.len != 0 ? somme(res, line) : line;
+        
+        nombreDeZeros++;
+        tmp2 = tmp2->precedent;
+    }
+    
+    return res;
+}

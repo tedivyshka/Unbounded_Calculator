@@ -1,3 +1,6 @@
+#ifndef UNBOUNDED_INT
+#define UNBOUNDED_INT
+
 typedef struct chiffre{
   struct chiffre *suivant;
   char c;
@@ -27,3 +30,4 @@ unbounded_int unbounded_int_somme(unbounded_int a,unbounded_int b);
 unbounded_int unbounded_int_difference(unbounded_int a,unbounded_int b);
 //
 unbounded_int unbounded_int_produit(unbounded_int a,unbounded_int b);
+#endif
