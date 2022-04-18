@@ -353,7 +353,7 @@ unbounded_int unbounded_int_difference( unbounded_int a, unbounded_int b){
         }
 
     }
-chiffre * newChiffre(char c){
+static chiffre * newChiffre(char c){
     chiffre* res = malloc(sizeof(chiffre));
     res->c = c;
     return res;
@@ -405,4 +405,14 @@ static unbounded_int multiplication(unbounded_int a,unbounded_int b){
     }
     
     return res;
+}
+unbounded_int unbounded_int_produit(unbounded_int a , unbounded_int b){
+  if((a.signe=='+' && b.signe=='+') || (a.signe=='-' && b.signe=='-')){
+      return multiplication(a,b);
+  }
+  if((a.signe=='+' && b.signe=='-') || (a.signe=='-' && b.signe=='+')){
+      unbounded_int res = multiplication(a,b);
+      res.signe='-';
+      return res;
+  }
 }
