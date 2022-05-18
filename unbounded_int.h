@@ -1,5 +1,6 @@
 #ifndef UNBOUNDED_INT
 #define UNBOUNDED_INT
+#include <stdlib.h>
 
 typedef struct chiffre{
   struct chiffre *suivant;
@@ -17,7 +18,7 @@ typedef struct{
 //
 unbounded_int string2unbounded_int(const char *e);
 //
-unbounded_int ll2unbouded_int(long long i);
+unbounded_int ll2unbounded_int(long long i);
 //
 char *unbounded_int2string(unbounded_int i);
 //

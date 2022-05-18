@@ -232,9 +232,9 @@ static unbounded_int diff(unbounded_int a,unbounded_int b){
            current->c = (m-n+r+10) + '0';
            r=-1;
         }
-       
-       
-        
+
+
+
         ajoutDebut(&res, current);
     }
 
@@ -247,19 +247,20 @@ static unbounded_int diff(unbounded_int a,unbounded_int b){
     return res;
 }
 static unbounded_int Vrai_unbounded(unbounded_int a){
-   chiffre * l;
-    while(a.premier->c=='0'){
-       
-          a.len--;
+  chiffre * l;
+  while(a.len > 1 && a.premier->c=='0'){
+        a.len--;
         l=a.premier;
         a.premier=l->suivant;
-      
-    }
+  }
+  if(a.len == 1 && a.premier->c == '0'){
+    a.signe = '+';
+  }
   return a;
 }
 
 static int Max(unbounded_int a,unbounded_int b){
- 
+
   if(a.len<b.len){
     return 0;
   }
@@ -298,7 +299,7 @@ unbounded_int unbounded_int_somme(unbounded_int a, unbounded_int b){
             if((Max(a,b)==1) || (Max(a,b)==-1)){
                 return Vrai_unbounded(      diff(a,b));
             }else{
-                
+
                 unbounded_int c= diff(b,a);
                 c.signe='-';
               return Vrai_unbounded(c);
@@ -306,16 +307,17 @@ unbounded_int unbounded_int_somme(unbounded_int a, unbounded_int b){
         }
       if(a.signe=='-' && b.signe=='+'){
         if((Max(a,b)==1) || (Max(a,b)==-1)){
-                unbounded_int c= diff(a,b);
-                c.signe='-';
+              unbounded_int c= diff(a,b);
+              c.signe='-';
+
               return Vrai_unbounded(c);
         }else{
           return Vrai_unbounded(diff(b,a));
         }
-         
-      }  
+
+      }
 }
-unbounded_int unbounded_int_difference( unbounded_int a, unbounded_int b){  
+unbounded_int unbounded_int_difference( unbounded_int a, unbounded_int b){
         if(a.signe=='+' && b.signe=='+'){
             if((Max(a,b)==1)||(Max(a,b)==-1)){
                 return Vrai_unbounded(diff(a,b));
@@ -325,7 +327,7 @@ unbounded_int unbounded_int_difference( unbounded_int a, unbounded_int b){
                  return Vrai_unbounded(c);
                  //return c;
             }
-           
+
         }
         if(a.signe=='-' && b.signe=='-'){
            if((Max(a,b)==1)||(Max(a,b)==-1)){
@@ -342,14 +344,14 @@ unbounded_int unbounded_int_difference( unbounded_int a, unbounded_int b){
         }
         if(a.signe=='+' && b.signe=='-'){
             return Vrai_unbounded(somme(a,b));
-          
-         
+
+
         }
         if(a.signe=='-' && b.signe=='+'){
             unbounded_int c=somme(a,b);
             c.signe='-';
           return Vrai_unbounded(c);
-          
+
         }
 
     }
@@ -365,9 +367,9 @@ static unbounded_int multiplication(unbounded_int a,unbounded_int b){
     res.signe = '+';
     int r = 0, m, n;
     int nombreDeZeros = 0, i;
-    
+
     chiffre * tmp2=b.dernier;
-    
+
     while(tmp2 != NULL){
         chiffre * tmp1=a.dernier;
         unbounded_int line;
@@ -375,35 +377,35 @@ static unbounded_int multiplication(unbounded_int a,unbounded_int b){
         line.len = 0;
         r = 0;
         m = tmp2->c - '0';
-        
+
         if(m == 0){
             nombreDeZeros++;
             tmp2 = tmp2->precedent;
             continue;
         }
-        
+
         for(i = 0; i < nombreDeZeros; i++)
             ajoutDebut(&line, newChiffre('0'));
-        
+
         while(tmp1 != NULL){
             n = tmp1->c - '0';
-            
+
             ajoutDebut(&line, newChiffre((m*n+r)%10 + '0'));
             r=(m*n+r)/10;
-            
+
             tmp1 = tmp1->precedent;
         }
-        
+
         if(r > 0)
             ajoutDebut(&line, newChiffre(r + '0'));
-        
-        
+
+
         res = res.len != 0 ? somme(res, line) : line;
-        
+
         nombreDeZeros++;
         tmp2 = tmp2->precedent;
     }
-    
+
     return res;
 }
 unbounded_int unbounded_int_produit(unbounded_int a , unbounded_int b){

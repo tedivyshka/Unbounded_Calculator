@@ -33,7 +33,7 @@ void process_exp(char* buffer){
   char op;
 
   int i = 0;
-  //add var name
+  //add lvar name
   while(*currentChar != '\0'){
     if(isspace(*currentChar)){
       currentChar++;
