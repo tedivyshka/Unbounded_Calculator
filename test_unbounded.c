@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "unbounded_int.h"
 
 
@@ -19,39 +20,98 @@ static void affiche_unbounded_int(unbounded_int a){
     printf("\n");
 
 }
+
+static void testSomme(){
+    int resultat = 0;
+    for(int i = 0; i < 10000; i++){
+      long long a = random();
+      unbounded_int u1 = ll2unbounded_int(a);
+
+      long long b = random();
+      unbounded_int u2 = ll2unbounded_int(b);
+
+      long long expectedLong = a + b;
+      unbounded_int returnedUI = unbounded_int_somme(u1,u2);
+      long long returnedLong = atoll(unbounded_int2string(returnedUI));
+
+      if(expectedLong == returnedLong){
+          resultat += 1;
+      }else{
+        printf("Sum of: %lld and %lld\nExpected: %lld\nReturned: %lld\n",a,b,expectedLong,returnedLong);
+      }
+  }
+  printf("Correct answers for sum test : %d/10000\n",resultat);
+}
+
+static void testDifference(){
+    int resultat = 0;
+    for(int i = 0; i < 10000; i++){
+
+        long long a = random();
+        unbounded_int u1 = ll2unbounded_int(a);
+
+        long long b = random();
+        unbounded_int u2 = ll2unbounded_int(b);
+
+        long long expectedLong = a - b;
+        unbounded_int returnedUI = unbounded_int_difference(u1,u2);
+        long long returnedLong = atoll(unbounded_int2string(returnedUI));
+
+        if(expectedLong == returnedLong){
+            resultat += 1;
+        }else{
+          printf("Sum of: %lld and %lld\nExpected: %lld\nReturned: %lld\n",a,b,expectedLong,returnedLong);
+        }
+    }
+    printf("Correct answers for difference test : %d/10000\n",resultat);
+}
+
+static void testProduit(){
+  int resultat = 0;
+  for(int i = 0; i < 10000; i++){
+    long long a = random();
+    unbounded_int u1 = ll2unbounded_int(a);
+
+    long long b = random();
+    unbounded_int u2 = ll2unbounded_int(b);
+
+    long long expectedLong = a * b;
+    unbounded_int returnedUI = unbounded_int_produit(u1,u2);
+    long long returnedLong = atoll(unbounded_int2string(returnedUI));
+
+    if(expectedLong == returnedLong){
+        resultat += 1;
+    }else{
+      printf("Product of: %lld and %lld\nExpected: %lld\nReturned: %lld\n",a,b,expectedLong,returnedLong);
+    }
+  }
+  printf("Correct answers for product test : %d/10000\n",resultat);
+}
+
+static void testlonglongToUnboundedInt(){
+    int resultat = 0;
+    for(int j = 1; j <= 10000; j++){
+        long long randLong = random();
+        unbounded_int resultUnbounded = ll2unbounded_int(randLong);
+        long long resultLongLong = atoll(unbounded_int2string(resultUnbounded));
+        if(randLong == resultLongLong){
+          resultat += 1;
+        }
+        else{
+          printf("Conversion of: %lld \nReturned: %lld\n",randLong,resultLongLong);
+        }
+    }
+    printf("Conversion from long long to unbounded int : %d / 10000 \n", resultat);
+}
+
 static void test(){
-
-    unbounded_int a = string2unbounded_int("-634");
-    printf("a = ");
-    affiche_unbounded_int(a);
-    unbounded_int b = string2unbounded_int("200");
-    printf("b = ");
-    affiche_unbounded_int(b);
-    unbounded_int c = string2unbounded_int("-414");
-    printf("c = ");
-    affiche_unbounded_int(c);
-    char * f=unbounded_int2string(string2unbounded_int("-4543676543298" ));
-    printf("d :%s\n",f);
-    int x= unbounded_int_cmp_unbounded_int(a,b);
-    printf("x = %d\n",x);
-    int y= unbounded_int_cmp_unbounded_int(b,b);
-    printf("y = %d\n",y);
-    int z= unbounded_int_cmp_ll(b,4521524);
-    printf("z = %d\n",z);
-    int t= unbounded_int_cmp_unbounded_int(a,a);
-    printf("t = %d\n",t);
-    unbounded_int n = unbounded_int_somme(a,c);
-    printf(" somme = ");
-    affiche_unbounded_int(n);
-    unbounded_int g = unbounded_int_difference(a,c);
-    printf("diff = ");
-    affiche_unbounded_int(g);
-
-
-
+  testlonglongToUnboundedInt();
+  testSomme();
+  testDifference();
+  testProduit();
 }
 
 int main(){
     test();
-return 0;
+    return 0;
 }
