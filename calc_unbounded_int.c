@@ -3,26 +3,55 @@
 #include <string.h>
 #include <ctype.h>
 #include "unbounded_int.h"
+typedef struct{
+  char* nom;
+  char * contenu;
+} variable;
+
+
+static int est_nom_variable(const char *var){
+    assert(var);
+    if(isdigit(var)) return 0;
+    return 1;
+}
+
 
 
 //exemple: a = 3 * b
-void execute_op(char* lvar, char* rvar1, char op, char* rvar2){
-  printf("Execute %c on %s\n",op,lvar);
+char* execute_op(char* lvar, char* rvar1, char op, char* rvar2){
+  unbounded_int tmp1;
+  unbounded_int tmp2;
+  if(est_nom_variable(rvar1)==0 && est_nom_variable(rvar2)==0){
+     tmp1=string2unbounded_int(rvar1);
+     tmp2=string2unbounded_int(rvar2);
+  }
+    
+       
+  unbounded_int result;
+  if(op=='*'){
+      result=unbounded_int_produit(tmp1,tmp2);
+  }
+  else if(op=='+'){
+      result=unbounded_int_somme(tmp1,tmp2);
+  }
+  else if(op=='-'){
+      result=unbounded_int_difference(tmp1,tmp2);
+  }
+ 
   //
   //TODO: prend la variable lvar ou le cree si elle n'existe pas
   // effectue rvar1 op rvar2 et ajoute le resultat a lvar
   //
+  lvar=unbounded_int2string(result);
   return;
 }
 
 //exemple: a = 123123
-void assign_var(char* lvar, char* rvar1){
-  printf("Assign %s to %s\n",rvar1,lvar);
-  //
-  //TODO: prend la variable lvar ou le cree si elle n'existe pas
-  // effectue rvar1 a lvar
-  //
-  return;
+  variable assign_var(char* lvar, char* rvar1){
+    variable a ;
+    a.nom=lvar;
+    a.contenu=rvar1;
+    return a;
 }
 
 //prend un expression a = 3 * b ou a = 123123 et change la valeur de a
@@ -109,6 +138,10 @@ void process_print(char* rhs){
   //TODO: prend le rhs et affiche le resultat de la variable ou
   // simplement l'expression
   //
+
+}
+void run(char * fic){
+
 }
 
 int main(int argc, char **argv)
