@@ -4,32 +4,140 @@
 #include <ctype.h>
 #include "unbounded_int.h"
 
+typedef struct variable{
+  char* name;
+  unbounded_int value;
+} var;
+
+static int tabLen = 0;
+static int tabCapacity = 4;
+static var* list;
+
+static void initList(){
+  list = malloc(sizeof(var) * 4);
+}
+
+static var* getVar(char* name){
+  for (int i = 0; i < tabLen; i++) {
+        if((list+i)->name!=NULL){
+            if(strcmp(((list+i)->name),name)==0){
+                return (list+i);
+            }
+        }
+    }
+    return NULL;
+}
+
+static int isnumber(char* s){
+  int len = strlen(s);
+  for(int i = 0; i < len; i++){
+    if(i == 0 && (s[i]=='+' || s[i]=='-') && len > 1)
+      continue;
+    if(!isdigit(s[i])){
+      return 0;
+    }
+  }
+  return 1;
+}
+
+static void addNameToList(char* name){
+  if(tabLen+1 >= tabCapacity){
+    tabCapacity*=2;
+    list = realloc(list,sizeof(var)*tabCapacity);
+  }
+  var temp;
+  temp.name = name;
+  list[tabLen] = temp;
+  tabLen++;
+}
+
+static void addToList(char* name, unbounded_int val){
+  if(tabLen+1 >= tabCapacity){
+    tabCapacity*=2;
+    list = realloc(list,sizeof(var)*tabCapacity);
+  }
+  var temp;
+  temp.value = val;
+  temp.name = name;
+  list[tabLen] = temp;
+  tabLen++;
+}
 
 //exemple: a = 3 * b
-void execute_op(char* lvar, char* rvar1, char op, char* rvar2){
-  printf("Execute %c on %s\n",op,lvar);
+static void execute_op(char* lvar, char* rvar1, char op, char* rvar2){
+  printf("Execute %s %c %s on %s\n",rvar1, op , rvar2 ,lvar);
   //
   //TODO: prend la variable lvar ou le cree si elle n'existe pas
   // effectue rvar1 op rvar2 et ajoute le resultat a lvar
   //
+  var* v = getVar(lvar);
+
+
+  unbounded_int leftUnbounded;
+  if( isnumber(rvar1) ){
+    leftUnbounded = ll2unbounded_int(atoll(rvar1));
+  }else{
+    leftUnbounded = getVar(rvar1)->value;
+    //TODO variable doesnt exist -> exit with error
+  }
+
+  unbounded_int rightUnbounded;
+  if( isnumber(rvar2) ){
+    rightUnbounded = ll2unbounded_int(atoll(rvar2));
+  }else{
+    if(getVar(rvar2) == NULL){
+      printf("Did not find %s\n",rvar2);
+      exit(2);
+    }
+    rightUnbounded = getVar(rvar2)->value;
+    //TODO variable doesnt exist -> exit with error
+  }
+
+  unbounded_int value;
+
+  switch(op){
+    case '*':
+      value = unbounded_int_produit(leftUnbounded,rightUnbounded);
+      break;
+    case '+':
+      value = unbounded_int_somme(leftUnbounded,rightUnbounded);
+      break;
+    case '-':
+      value = unbounded_int_difference(leftUnbounded,rightUnbounded);
+      break;
+  }
+
+  if(v == NULL){
+      addToList(lvar,value);
+      printf("After execution, assigned %s to %s\n\n",unbounded_int2string(value),lvar);
+  }else{
+    v->value = value;
+    printf("After execution, assigned %s to %s\n\n",unbounded_int2string(v->value),v->name);
+  }
+
   return;
 }
 
 //exemple: a = 123123
-void assign_var(char* lvar, char* rvar1){
-  printf("Assign %s to %s\n",rvar1,lvar);
-  //
-  //TODO: prend la variable lvar ou le cree si elle n'existe pas
-  // effectue rvar1 a lvar
-  //
+static void assign_var(char* lvar, char* rvar){
+  printf("Assign %s to %s\n\n",rvar,lvar);
+  var* v = getVar(lvar);
+  if(v != NULL){
+    v->value = string2unbounded_int(rvar);
+  }
+  else{
+    addToList(lvar,string2unbounded_int(rvar));
+  }
   return;
 }
 
 //prend un expression a = 3 * b ou a = 123123 et change la valeur de a
-void process_exp(char* buffer){
+static void process_exp(char* buffer){
   char* currentChar = buffer;
-  char lvar[100];
-  char rvar1[100]; char rvar2[100];
+
+  char* lvar = malloc(sizeof(char) * 100);
+  char* rvar1 = malloc(sizeof(char) * 100);
+  char* rvar2 = malloc(sizeof(char) * 100);
   char op;
 
   int i = 0;
@@ -48,7 +156,8 @@ void process_exp(char* buffer){
     i++;
   }
   lvar[i] = '\0';
-  i = 0; //finished writing lvar name
+  lvar = realloc(lvar, sizeof(char) * (strlen(lvar)+1));
+  i = 0;
 
   while(*currentChar != '\0'){
     if(isspace(*currentChar)){
@@ -63,9 +172,9 @@ void process_exp(char* buffer){
     i++;
   }
   rvar1[i] = '\0';
-  //printf("rvar1: %s\n",rvar1);
-  i = 0; //finished writing rvar1 name
+  rvar1 = realloc(rvar1, sizeof(char) * (strlen(rvar1)+1));
 
+  i = 0;
   while(*currentChar != '\0'){
     if(isspace(*currentChar)){
       currentChar++;
@@ -74,16 +183,12 @@ void process_exp(char* buffer){
     break;
   }
   if(*currentChar == '\0'){
-    //op == null, expression de forme a = 123123
     assign_var(lvar,rvar1);
     return;
   }
 
-  //op != null, expression de forme a = 3 * b
-  //next char: op
   op = *currentChar;
   currentChar++;
-  //printf("Op: %c\n",op);
 
   i = 0; //finished writing op
   while(*currentChar != '\0'){
@@ -96,8 +201,7 @@ void process_exp(char* buffer){
     i++;
   }
   rvar2[i] = '\0';
-  //printf("rvar2: %s\n\n",rvar2);
-  //finished writing rvar2
+  rvar2 = realloc(rvar2, sizeof(char) * (strlen(rvar2)+1));
   execute_op(lvar,rvar1,op,rvar2);
   return;
 }
@@ -105,16 +209,22 @@ void process_exp(char* buffer){
 //prend un expression print a * 3 et affiche la valeur de a * 3
 void process_print(char* rhs){
   printf("Print expression: \t%s\n",rhs);
-  //
-  //TODO: prend le rhs et affiche le resultat de la variable ou
-  // simplement l'expression
-  //
+
+  var* v = getVar(rhs);
+  if(v == NULL){
+
+  }
+  else{
+    printf("%s = %s\n\n",rhs,unbounded_int2string(v->value));
+  }
 }
+
 
 int main(int argc, char **argv)
 {
+  initList();
     //
-    //  TODO: creer une tableau avec les noms des variables
+    //  TODO: creer une list avec les noms des variables
     //  TODO: ecrire le resultat dans un fichier output
     //
 

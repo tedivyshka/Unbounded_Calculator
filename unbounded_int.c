@@ -67,7 +67,10 @@ unbounded_int ll2unbounded_int(long long i) {
 }
 
 char *unbounded_int2string(unbounded_int i){
-  char* res = malloc(sizeof(char)*i.len);
+  if(i.premier == NULL){
+    return "";
+  }
+  char* res = malloc(sizeof(char)*(i.len+2));
   *res = i.signe;
   chiffre* current = i.premier;
   int count = sizeof(char);
@@ -76,6 +79,7 @@ char *unbounded_int2string(unbounded_int i){
     count+=sizeof(char);
     current = current->suivant;
   }
+  res[count] = '\0';
   return res;
 }
 
@@ -114,45 +118,59 @@ int unbounded_int_cmp_unbounded_int(unbounded_int a, unbounded_int b){
   return 0;
 }
 
-int unbounded_int_cmp_ll(unbounded_int a, long long b) {
-  if(a.signe == '*'){
-    return -1;
-  }
-  if(a.signe == '+' && b < 0)
-    return 1;
-  if(a.signe == '-' && b >= 0)
-    return -1;
+int unbounded_int_cmp_ll(unbounded_int a, long long b){
+    long long bCopy=b;
+    unsigned int bSize=1;
+    // calcul de la taille de b
+    while(bCopy/=10) bSize++;
 
-  long long temp = b;
-  int nbDigits_b = 0;
-  while(temp!=0){
-     temp=temp/10;
-     nbDigits_b++;
-  }
-
-  if(a.len > nbDigits_b){
-    return (a.signe == '+')?1:-1;
-  }
-  if(nbDigits_b > a.len){
-    return (b>0)?-1:1;
-  }
-
-  chiffre* a_current = a.dernier;
-  long long b_current = (b<0)?-b:b;
-
-  int res = 0;
-
-  while(a_current != NULL){
-    if(a_current->c-'0' > b_current%10){
-      res = (a.signe=='-')?-1:1;
+    // test de signe et de longueur
+    if(a.signe == '+'){
+        if(b < 0) return 1;
+        if(a.len > bSize) return 1;
+        if(a.len < bSize) return -1;
     }
-    else if(a_current->c-'0' < b_current%10){
-      res = (b<0)?1:-1;
+    else if(a.signe == '-'){
+        if(b > 0) return -1;
+        if(a.len > bSize) return -1;
+        if(a.len < bSize) return 1;
     }
-    a_current = a_current->precedent;
-    b_current /= 10;
-  }
-  return res;
+
+    // on met le long long en positif s'il est négatif pour permettre la comparaison chiffre par chiffre
+    if(b<0){
+        b*=-1;
+    }
+
+    // transformation du long long en tableau de long long unité par unité
+    long long tab[bSize];
+    while(bSize--){
+        tab[bSize]=b%10;
+        b/=10;
+    }
+
+    chiffre* nextChiffre=a.premier;
+    int compt=0;
+    while(nextChiffre!=NULL){
+        if(a.signe=='+'){
+            if(*(tab+compt)>(nextChiffre->c)-'0'){
+                return -1;
+            }
+            else if(*(tab+compt)<(nextChiffre->c)-'0'){
+                return 1;
+            }
+        }
+        else{
+            if(*(tab+compt)>(nextChiffre->c)-'0'){
+                return 1;
+            }
+            else if(*(tab+compt)<(nextChiffre->c)-'0'){
+                return -1;
+            }
+        }
+        nextChiffre=nextChiffre->suivant;
+        compt++;
+    }
+    return 0;
 }
 
 
@@ -362,6 +380,12 @@ static chiffre * newChiffre(char c){
 }
 
 static unbounded_int multiplication(unbounded_int a,unbounded_int b){
+    if(unbounded_int_cmp_ll(a,0) == 0){
+      return a;
+    }
+    if(unbounded_int_cmp_ll(b,0) == 0){
+      return b;
+    }
     unbounded_int res;
     res.len = 0;
     res.signe = '+';
@@ -405,7 +429,6 @@ static unbounded_int multiplication(unbounded_int a,unbounded_int b){
         nombreDeZeros++;
         tmp2 = tmp2->precedent;
     }
-
     return res;
 }
 unbounded_int unbounded_int_produit(unbounded_int a , unbounded_int b){
@@ -414,7 +437,9 @@ unbounded_int unbounded_int_produit(unbounded_int a , unbounded_int b){
   }
   if((a.signe=='+' && b.signe=='-') || (a.signe=='-' && b.signe=='+')){
       unbounded_int res = multiplication(a,b);
-      res.signe='-';
+      if(unbounded_int_cmp_ll(res,0)!=0){
+        res.signe='-';
+      }
       return res;
   }
 }
