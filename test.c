@@ -18,6 +18,9 @@ static int isnumber(char* s){
 }
 
 int main(){
-  printf("%d %d \n",isnumber("123"), isnumber("-234"));
-  printf(unbounded_int2string(unbounded_int_produit(ll2unbounded_int(-974430611887344),ll2unbounded_int(0))));
+  unbounded_int a = string2unbounded_int("1795353528689353091375753130");
+  unbounded_int b = ll2unbounded_int(-9223372036854775806);
+  unbounded_int c = ll2unbounded_int(7867656443555498966543);
+
+  printf("%s \n",unbounded_int2string(unbounded_int_difference(a,c)));
 }

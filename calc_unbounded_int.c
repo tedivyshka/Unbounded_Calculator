@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "unbounded_int.h"
+#include "unbounded_int.c"
 
 typedef struct variable{
   char* name;
@@ -75,7 +76,7 @@ static void execute_op(char* lvar, char* rvar1, char op, char* rvar2){
 
   unbounded_int leftUnbounded;
   if( isnumber(rvar1) ){
-    leftUnbounded = ll2unbounded_int(atoll(rvar1));
+    leftUnbounded = string2unbounded_int(rvar1);
   }else{
     leftUnbounded = getVar(rvar1)->value;
     //TODO variable doesnt exist -> exit with error
@@ -83,7 +84,7 @@ static void execute_op(char* lvar, char* rvar1, char op, char* rvar2){
 
   unbounded_int rightUnbounded;
   if( isnumber(rvar2) ){
-    rightUnbounded = ll2unbounded_int(atoll(rvar2));
+    rightUnbounded = string2unbounded_int(rvar2);
   }else{
     if(getVar(rvar2) == NULL){
       printf("Did not find %s\n",rvar2);
