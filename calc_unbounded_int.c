@@ -14,13 +14,17 @@ static int tabLen = 0;
 static int tabCapacity = 4;
 static var* list;
 
-static void initList(){
-  list = malloc(sizeof(var) * 4);
-}
 
 static void exitError(char *error){
   printf("An error occurred: %s\n",error);
   exit(EXIT_FAILURE);
+}
+
+static void initList(){
+  list = malloc(sizeof(var) * 4);
+  if(list == NULL){
+    exitError("Malloc error.");
+  }
 }
 
 static var* getVar(char* name){
@@ -154,6 +158,10 @@ static void process_exp(char* buffer){
   char* lvar = malloc(sizeof(char) * 100);
   char* rvar1 = malloc(sizeof(char) * 100);
   char* rvar2 = malloc(sizeof(char) * 100);
+
+  if(lvar == NULL || rvar1 == NULL || rvar1 == NULL){
+    exitError("Malloc error.");
+  }
   char op;
 
   int i = 0;
@@ -250,9 +258,14 @@ void process_print(const char *ligne, FILE *output) {
     int strLength=0;
     int count = 0;
     size_t* maxSize = malloc(sizeof(size_t));
+    if(maxSize == NULL){
+      exitError("Malloc error.");
+    }
     *maxSize = 1;
     char* var = malloc(sizeof(char)* *(maxSize));
-
+    if(var == NULL){
+      exitError("Malloc error.");
+    }
     char current = *ligne;
 
     while(isspace(current)){
@@ -261,49 +274,80 @@ void process_print(const char *ligne, FILE *output) {
     }
 
     while(current!='\n' && current!='\0'){
-        if(current==' '){ // cas d'un espace dans la ligne
+        if(current==' '){
             foundSpace=1;
         }
-        else if (isalpha(current)) { // cas d'une lettre dans la variable
-            if (foundSpace) { // si un espace a déjà été trouvé après un caractère, à l'encontre d'un nouveau caractère on provoque une erreur
-                exitError("Found space in print");
+        else if (isalnum(current)) {
+            if (foundSpace) {
+              exitError("Found space in print");
             }
             var=reallocString(var,maxSize,strLength);
             *(var+strLength)=current;
             strLength++;
+        }
+        else{
+          exitError("Illegal character in print.");
         }
         count++;
         current = *(ligne + count);
     }
     var=realloc(var,(strLength+1)*sizeof(char));
     *(var+strLength) = '\0';
-    // récupération de notre pointeur de structure si la variable existe
-    char* stringOutput;
 
-    if(getVar(var)!=NULL){ // cas ou la variable existe
+    char* stringOutput;
+    if(getVar(var)!=NULL){
         char* tmpVarValeur=unbounded_int2string(getVar(var)->value);
         stringOutput=malloc(sizeof(char)*(strlen(tmpVarValeur)+strlen(getVar(var)->name)+5));
+
+        if(stringOutput == NULL){
+          exitError("Malloc error.");
+        }
+
         sprintf(stringOutput,"%s = %s\n",var,tmpVarValeur);
         stringOutput[strlen(stringOutput)] = '\0';
         fputs(stringOutput,output);
     }
-    else if(strLength!=0){ // on affiche dans le fichier que la variable vaut 0 sinon
-        addToList(var,ll2unbounded_int(0));
-        stringOutput=malloc(sizeof(char)* (strlen(var)+5));
-        sprintf(stringOutput,"%s = 0\n",var);
-        fputs(stringOutput,output);
+    else if(strLength!=0){
+      if(strcmp(var,"print") == 0){
+        exitError("Variable name can not be the keyword print.");
+      }
+      addToList(var,ll2unbounded_int(0));
+      stringOutput=malloc(sizeof(char)* (strlen(var)+5));
+
+      if(stringOutput == NULL){
+        exitError("Malloc error.");
+      }
+
+      sprintf(stringOutput,"%s = +0\n",var);
+      fputs(stringOutput,output);
     }
-    fflush(output); // on ecrit le dernier print avant de terminer le programme
+    fflush(output); // ecrire le dernier print avant de terminer le programme
 }
 
+static void exitProgram(FILE* fout){
+  fflush(fout);
+  exit(0);
+}
 
-void interpreter(FILE* fin, FILE* fout){
+static void interpreter(FILE* fin, FILE* fout){
     int taille_max=1024;
     char* ligne=malloc(sizeof(char)*taille_max);
+    if(ligne == NULL){
+      exitError("Malloc error.");
+    }
+
     while(fgets(ligne,taille_max,fin)!=0){
       char* rhs = malloc(sizeof(char)*taille_max);
+      if(rhs == NULL){
+        exitError("Malloc error.");
+      }
+
+
       if(sscanf(ligne, "print %s",rhs)){
         process_print(rhs,fout);
+      }
+      else if(sscanf(ligne, "end%s",rhs)){
+        exitProgram(fout);
       }
       else {
         process_exp(ligne);
