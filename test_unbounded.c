@@ -3,20 +3,19 @@
 #include <limits.h>
 #include "unbounded_int.h"
 #include "unbounded_int.c"
-#define SAMPLESIZE 10000
+#define SAMPLE_SIZE 10000
 
 static long long randomLongLong(){
   int length = (random() % 18) + 1;
   long long r = ((long long)random() << 25) + random();
   for(int i = 0; i < length; i++) r /= 10;
-  int key = rand() % 2;
-  if(key == 0) r *= -1;
+  if(random() % 2 == 0) r *= -1;
   return r;
 }
 
 static void testSomme(){
     int result = 0;
-    for(int i = 0; i < SAMPLESIZE; i++){
+    for(int i = 0; i < SAMPLE_SIZE; i++){
       long long a = randomLongLong();
       unbounded_int u1 = ll2unbounded_int(a);
 
@@ -33,17 +32,17 @@ static void testSomme(){
         printf("Sum of: %lld and %lld\nExpected: %lld\nReturned: %lld\n",a,b,expectedLong,returnedLong);
       }
   }
-  if(result == SAMPLESIZE)
+  if(result == SAMPLE_SIZE)
     printf("\033[0;32m");
-  printf("Correct answers for sum test : %d/%d\n",result,SAMPLESIZE);
-  if(result == SAMPLESIZE)
+  printf("Correct answers for sum test : %d/%d\n",result,SAMPLE_SIZE);
+  if(result == SAMPLE_SIZE)
     printf("\033[0m");
   printf("\n");
 }
 
 static void testDifference(){
     int result = 0;
-    for(int i = 0; i < SAMPLESIZE; i++){
+    for(int i = 0; i < SAMPLE_SIZE; i++){
 
         long long a = randomLongLong();
         unbounded_int u1 = ll2unbounded_int(a);
@@ -61,17 +60,17 @@ static void testDifference(){
           printf("Difference of: %lld and %lld\nExpected: %lld\nReturned: %lld\n",a,b,expectedLong,returnedLong);
         }
     }
-    if(result == SAMPLESIZE)
+    if(result == SAMPLE_SIZE)
       printf("\033[0;32m");
-    printf("Correct answers for difference test : %d/%d\n",result,SAMPLESIZE);
-    if(result == SAMPLESIZE)
+    printf("Correct answers for difference test : %d/%d\n",result,SAMPLE_SIZE);
+    if(result == SAMPLE_SIZE)
       printf("\033[0m");
     printf("\n");
 }
 
 static void testProduit(){
   int result = 0;
-  for(int i = 0; i < SAMPLESIZE; i++){
+  for(int i = 0; i < SAMPLE_SIZE; i++){
     long long a = random();
     unbounded_int u1 = ll2unbounded_int(a);
 
@@ -88,17 +87,17 @@ static void testProduit(){
       printf("Product of: %lld and %lld\nExpected: %lld\nReturned: %lld\n",a,b,expectedLong,returnedLong);
     }
   }
-  if(result == SAMPLESIZE)
+  if(result == SAMPLE_SIZE)
     printf("\033[0;32m");
-  printf("Correct answers for product test : %d/%d\n",result,SAMPLESIZE);
-  if(result == SAMPLESIZE)
+  printf("Correct answers for product test : %d/%d\n",result,SAMPLE_SIZE);
+  if(result == SAMPLE_SIZE)
     printf("\033[0m");
   printf("\n");
 }
 
 static void testConversions(){
     int result = 0;
-    for(int j = 1; j <= SAMPLESIZE; j++){
+    for(int j = 1; j <= SAMPLE_SIZE; j++){
         long long randLong = randomLongLong();
         unbounded_int resultUnbounded = ll2unbounded_int(randLong);
         long long resultLongLong = atoll(unbounded_int2string(resultUnbounded));
@@ -109,17 +108,17 @@ static void testConversions(){
           printf("Conversion of: %lld \nReturned: %lld\n",randLong,resultLongLong);
         }
     }
-    if(result == SAMPLESIZE)
+    if(result == SAMPLE_SIZE)
       printf("\033[0;32m");
-    printf("Conversion from long long to unbounded int : %d / %d \n", result,SAMPLESIZE);
-    if(result == SAMPLESIZE)
+    printf("Conversion from long long to unbounded int : %d / %d \n", result,SAMPLE_SIZE);
+    if(result == SAMPLE_SIZE)
       printf("\033[0m");
     printf("\n");
 }
 
 static void testUIcmpUI(){
   int result = 0;
-  for(int j = 1; j <= SAMPLESIZE; j++){
+  for(int j = 1; j <= SAMPLE_SIZE; j++){
       long long randLong = randomLongLong();
       unbounded_int unb1 = ll2unbounded_int(randLong);
 
@@ -140,17 +139,17 @@ static void testUIcmpUI(){
         printf("Comparison of:%lld and %lld \nReturned: %d\n",randLong,randLong2,comparison);
       }
   }
-  if(result == SAMPLESIZE)
+  if(result == SAMPLE_SIZE)
     printf("\033[0;32m");
-  printf("Comparison between unbounded int and unbounded int : %d / %d \n", result,SAMPLESIZE);
-  if(result == SAMPLESIZE)
+  printf("Comparison between unbounded int and unbounded int : %d / %d \n", result,SAMPLE_SIZE);
+  if(result == SAMPLE_SIZE)
     printf("\033[0m");
   printf("\n");
 }
 
 static void testUIcmpLL(){
   int result = 0;
-  for(int j = 1; j <= SAMPLESIZE; j++){
+  for(int j = 1; j <= SAMPLE_SIZE; j++){
       long long randLong = randomLongLong();
       unbounded_int unb1 = ll2unbounded_int(randLong);
 
@@ -170,17 +169,17 @@ static void testUIcmpLL(){
         printf("Comparison of:%lld and %lld \nReturned: %d\n",randLong,randLong2,comparison);
       }
   }
-  if(result == SAMPLESIZE)
+  if(result == SAMPLE_SIZE)
     printf("\033[0;32m");
-  printf("Comparison between unbounded int and long long : %d / %d \n", result,SAMPLESIZE);
-  if(result == SAMPLESIZE)
+  printf("Comparison between unbounded int and long long : %d / %d \n", result,SAMPLE_SIZE);
+  if(result == SAMPLE_SIZE)
     printf("\033[0m");
   printf("\n");
 }
 
 static void test(){
   printf("Initializing tests.\n\n");
-  
+
   testConversions();
 
   testUIcmpUI();

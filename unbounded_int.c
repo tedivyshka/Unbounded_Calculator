@@ -13,12 +13,12 @@ unbounded_int string2unbounded_int(const char *e){
     count++;
   }
   else{
-    res.signe=(e[0] >= '0' && e[0] <= '9')?'+':'*';
+    res.signe=(isdigit(e[0]))?'+':'*';
   }
 
   chiffre* current = malloc(sizeof(chiffre));
   current->c = e[count];
-  if(!(e[count] >= '0' && e[count] <= '9'))
+  if(!isdigit(e[count]))
     res.signe = '*';
   res.premier = current;
   count += 1;
@@ -26,7 +26,7 @@ unbounded_int string2unbounded_int(const char *e){
   while(e[count] != '\0'){
     chiffre* next = malloc(sizeof(chiffre));
     next->c = e[count];
-    if(!(e[count] >= '0' && e[count] <= '9'))
+    if(!isdigit(e[count]))
       res.signe = '*';
     current->suivant = next;
     next->precedent = current;

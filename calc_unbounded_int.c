@@ -158,16 +158,21 @@ static void process_exp(char* buffer){
   char* lvar = malloc(sizeof(char) * 100);
   char* rvar1 = malloc(sizeof(char) * 100);
   char* rvar2 = malloc(sizeof(char) * 100);
-
+  char op;
   if(lvar == NULL || rvar1 == NULL || rvar1 == NULL){
     exitError("Malloc error.");
   }
-  char op;
 
   int i = 0;
+  int foundSpace=0;
+
+  while(isspace(*currentChar)){
+      currentChar++;
+  }
   //add lvar name
   while(*currentChar != '\0'){
     if(isspace(*currentChar)){
+      foundSpace = 1;
       currentChar++;
       continue;
     }
@@ -175,21 +180,34 @@ static void process_exp(char* buffer){
       currentChar++;
       break;
     }
+    if(foundSpace){
+      exitError("Illegal expression.");
+    }
     lvar[i] = *currentChar;
     currentChar++;
     i++;
   }
   lvar[i] = '\0';
   lvar = realloc(lvar, sizeof(char) * (strlen(lvar)+1));
-  i = 0;
 
+
+  while(isspace(*currentChar)){
+      currentChar++;
+  }
+
+  i = 0;
+  foundSpace = 0;
   while(*currentChar != '\0'){
     if(isspace(*currentChar)){
+      foundSpace = 1;
       currentChar++;
       continue;
     }
-    if(!isdigit(*currentChar) && !isalpha(*currentChar)){
+    if(!isalnum(*currentChar)){
       break;
+    }
+    if(foundSpace){
+      exitError("Illegal expression.");
     }
     rvar1[i] = *currentChar;
     currentChar++;
@@ -197,6 +215,7 @@ static void process_exp(char* buffer){
   }
   rvar1[i] = '\0';
   rvar1 = realloc(rvar1, sizeof(char) * (strlen(rvar1)+1));
+
 
   i = 0;
   while(*currentChar != '\0'){
@@ -221,15 +240,25 @@ static void process_exp(char* buffer){
   op = *currentChar;
   currentChar++;
 
-  i = 0; //finished writing op
+  while(isspace(*currentChar)){
+      currentChar++;
+  }
+  //finished writing op
+  //write rvar2
+  i = 0;
+  foundSpace = 0;
   while(*currentChar != '\0'){
     if(isspace(*currentChar)){
+      foundSpace = 1;
       currentChar++;
       continue;
     }
     if(!isalnum(*currentChar) && (strchr("+-",*currentChar ) == NULL)){
       exitError("Invalid character in assignment.");
       break;
+    }
+    if(foundSpace){
+      exitError("Illegal expression.");
     }
     rvar2[i] = *currentChar;
     currentChar++;
@@ -254,74 +283,68 @@ static void process_exp(char* buffer){
 }
 
 void process_print(const char *ligne, FILE *output) {
-    int foundSpace=0;
-    int strLength=0;
-    int count = 0;
-    size_t* maxSize = malloc(sizeof(size_t));
-    if(maxSize == NULL){
-      exitError("Malloc error.");
+  int strLength=0;
+  int count = 0;
+  size_t* maxSize = malloc(sizeof(size_t));
+  if(maxSize == NULL){
+    exitError("Malloc error.");
+  }
+  *maxSize = 1;
+  char* var = malloc(sizeof(char)* *(maxSize));
+  if(var == NULL){
+    exitError("Malloc error.");
+  }
+  char current = *ligne;
+
+  while(current!='\0'){
+    if (isalnum(current)) {
+      var=reallocString(var,maxSize,strLength);
+      *(var+strLength)=current;
+      strLength++;
     }
-    *maxSize = 1;
-    char* var = malloc(sizeof(char)* *(maxSize));
-    if(var == NULL){
-      exitError("Malloc error.");
+    else{
+      exitError("Illegal character in print.");
     }
-    char current = *ligne;
+    count++;
+    current = *(ligne + count);
+  }
+  while(isspace(current)){
+      count++;
+      current = *(ligne + count);
+  }
+  if(*(ligne + count) != '\0'){
+    exitError("Illegal character in print.");
+  }
+  var=realloc(var,(strLength+1)*sizeof(char));
+  *(var+strLength) = '\0';
 
-    while(isspace(current)){
-        count++;
-        current = *(ligne + count);
-    }
-
-    while(current!='\n' && current!='\0'){
-        if(current==' '){
-            foundSpace=1;
-        }
-        else if (isalnum(current)) {
-            if (foundSpace) {
-              exitError("Found space in print");
-            }
-            var=reallocString(var,maxSize,strLength);
-            *(var+strLength)=current;
-            strLength++;
-        }
-        else{
-          exitError("Illegal character in print.");
-        }
-        count++;
-        current = *(ligne + count);
-    }
-    var=realloc(var,(strLength+1)*sizeof(char));
-    *(var+strLength) = '\0';
-
-    char* stringOutput;
-    if(getVar(var)!=NULL){
-        char* tmpVarValeur=unbounded_int2string(getVar(var)->value);
-        stringOutput=malloc(sizeof(char)*(strlen(tmpVarValeur)+strlen(getVar(var)->name)+5));
-
-        if(stringOutput == NULL){
-          exitError("Malloc error.");
-        }
-
-        sprintf(stringOutput,"%s = %s\n",var,tmpVarValeur);
-        stringOutput[strlen(stringOutput)] = '\0';
-        fputs(stringOutput,output);
-    }
-    else if(strLength!=0){
-      if(strcmp(var,"print") == 0){
-        exitError("Variable name can not be the keyword print.");
-      }
-      addToList(var,ll2unbounded_int(0));
-      stringOutput=malloc(sizeof(char)* (strlen(var)+5));
-
+  char* stringOutput;
+  if(getVar(var)!=NULL){
+      char* tmpVarValeur=unbounded_int2string(getVar(var)->value);
+      stringOutput=malloc(sizeof(char)*(strlen(tmpVarValeur)+strlen(getVar(var)->name)+5));
       if(stringOutput == NULL){
         exitError("Malloc error.");
       }
 
-      sprintf(stringOutput,"%s = +0\n",var);
+      sprintf(stringOutput,"%s = %s\n",var,tmpVarValeur);
+      stringOutput[strlen(stringOutput)] = '\0';
       fputs(stringOutput,output);
+  }
+  else if(strLength!=0){
+    if(strcmp(var,"print") == 0){
+      exitError("Variable name can not be the keyword print.");
     }
-    fflush(output); // ecrire le dernier print avant de terminer le programme
+    addToList(var,ll2unbounded_int(0));
+
+    stringOutput=malloc(sizeof(char)* (strlen(var)+5));
+    if(stringOutput == NULL){
+      exitError("Malloc error.");
+    }
+
+    sprintf(stringOutput,"%s = +0\n",var);
+    fputs(stringOutput,output);
+  }
+  fflush(output); // ecrire le dernier print avant de terminer le programme
 }
 
 static void exitProgram(FILE* fout){
@@ -338,12 +361,14 @@ static void interpreter(FILE* fin, FILE* fout){
 
     while(fgets(ligne,taille_max,fin)!=0){
       char* rhs = malloc(sizeof(char)*taille_max);
-      if(rhs == NULL){
+      char* rhs2 = malloc(sizeof(char)*taille_max);
+      if(rhs == NULL || rhs2 == NULL){
         exitError("Malloc error.");
       }
 
-
-      if(sscanf(ligne, "print %s",rhs)){
+      if(sscanf(ligne, "print %s %s",rhs,rhs2)){
+        if(strlen(rhs2)>0 || strlen(rhs)<1)
+          exitError("Illegal print expression.");
         process_print(rhs,fout);
       }
       else if(sscanf(ligne, "end%s",rhs)){
