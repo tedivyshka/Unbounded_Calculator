@@ -5,8 +5,6 @@
 #include <stdbool.h>
 #include "unbounded_int.h"
 
-
-
 unbounded_int string2unbounded_int(const char *e){
   unbounded_int res;
   int count = 0;
@@ -66,20 +64,17 @@ unbounded_int ll2unbounded_int(long long i) {
     return res;
 }
 
-char *unbounded_int2string(unbounded_int i){
-  if(i.premier == NULL){
-    return "";
+char* unbounded_int2string(unbounded_int i){
+  char* res=malloc(sizeof(char)*(i.len+2));
+  *res=i.signe;
+  int compt=1;
+  chiffre* tmp=i.premier;
+  while(tmp!=NULL && tmp->c != '\0'){
+    *(res+compt)=tmp->c;
+    compt++;
+    tmp=tmp->suivant;
   }
-  char* res = malloc(sizeof(char)*(i.len+2));
-  *res = i.signe;
-  chiffre* current = i.premier;
-  int count = sizeof(char);
-  while(current != NULL){
-    *(res + count) = current->c;
-    count+=sizeof(char);
-    current = current->suivant;
-  }
-  res[count] = '\0';
+  *(res+compt)='\0';
   return res;
 }
 
@@ -190,7 +185,7 @@ static unbounded_int somme(unbounded_int a,unbounded_int b){
     unbounded_int res;
     res.len = 0;
     res.signe = '+';
-    int len = 0, r = 0;
+    int r = 0;
 
     chiffre * tmp1=a.dernier;
     chiffre * tmp2=b.dernier;
@@ -225,7 +220,7 @@ static unbounded_int diff(unbounded_int a,unbounded_int b){
     unbounded_int res;
     res.len = 0;
     res.signe = '+';
-    int len = 0, r = 0;
+    int r = 0;
 
     chiffre * tmp1=a.dernier;
     chiffre * tmp2=b.dernier;
@@ -334,6 +329,10 @@ unbounded_int unbounded_int_somme(unbounded_int a, unbounded_int b){
         }
 
       }
+
+      if(a.signe=='*')
+        return b;
+      return a;
 }
 unbounded_int unbounded_int_difference( unbounded_int a, unbounded_int b){
         if(a.signe=='+' && b.signe=='+'){
@@ -372,6 +371,9 @@ unbounded_int unbounded_int_difference( unbounded_int a, unbounded_int b){
 
         }
 
+        if(a.signe=='*')
+          return b;
+        return a;
     }
 static chiffre * newChiffre(char c){
     chiffre* res = malloc(sizeof(chiffre));
@@ -442,4 +444,7 @@ unbounded_int unbounded_int_produit(unbounded_int a , unbounded_int b){
       }
       return res;
   }
+  if(a.signe=='*')
+    return b;
+  return a;
 }
