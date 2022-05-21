@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include<string.h>
 #include "unbounded_int.h"
 
 
@@ -258,7 +259,7 @@ static unbounded_int Vrai_unbounded(unbounded_int a){
   }
   return a;
 }
-
+//le plus grand unboud entre a et b 
 static int Max(unbounded_int a,unbounded_int b){
 
   if(a.len<b.len){
@@ -418,3 +419,38 @@ unbounded_int unbounded_int_produit(unbounded_int a , unbounded_int b){
       return res;
   }
 }
+static long decToBinary(unbounded_int a){
+  char * t = unbounded_int2string(a);
+  int c = atoi(t);
+  long bno=0,rem,f=1;
+   while(c != 0){
+      rem = c % 2;
+      bno = bno + rem * f;
+      f = f * 10;
+      c = c / 2;
+   }
+   return bno;
+}
+
+
+static unbounded_int binarytodec(long a){
+ 
+   int dno = 0, i = 0, rem;
+   while (a != 0) {
+      rem = a % 10;
+      a /= 10;
+      dno += rem * pow(2, i);
+      ++i;
+   
+}
+ char t [100] ;
+   itoa(dno, t, 10);
+   return string2unbounded_int(t);
+
+}
+
+unbounded_int unbounded_int_quotient(unbounded_int a,unbounded_int b){
+  return binarytodec(
+    decToBinary(a) / decToBinary(b)
+  );
+  }
