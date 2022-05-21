@@ -2,8 +2,11 @@
 #include <stdlib.h>
 #include <limits.h>
 #include "unbounded_int.h"
-#include "unbounded_int.c"
+
 #define SAMPLE_SIZE 10000
+
+
+
 
 static long long randomLongLong(){
   int length = (random() % 18) + 1;
@@ -177,6 +180,19 @@ static void testUIcmpLL(){
   printf("\n");
 }
 
+static void testquotient(){
+   
+        unbounded_int a=string2unbounded_int("500");
+        unbounded_int b=string2unbounded_int("2");
+        printf("division de 500 et 2 = %s",unbounded_int2string(unbounded_int_quotient(a,b)));
+        unbounded_int c=string2unbounded_int("100");
+        unbounded_int d=string2unbounded_int("50");
+        printf("division de 100 et 50 = %s",unbounded_int2string(unbounded_int_quotient(c,d)));
+        printf("division de 500 et 100 = %s",unbounded_int2string(unbounded_int_quotient(a,c)));
+      
+    
+}
+
 static void test(){
   printf("Initializing tests.\n\n");
 
@@ -188,9 +204,13 @@ static void test(){
   testSomme();
   testDifference();
   testProduit();
+  testquotient();
 }
 
+
 int main(){
+   
+
     test();
     return 0;
 }

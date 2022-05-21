@@ -1,9 +1,9 @@
-
 #include <stdio.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include<string.h>
+#include<math.h>
 #include "unbounded_int.h"
 
 
@@ -419,18 +419,7 @@ unbounded_int unbounded_int_produit(unbounded_int a , unbounded_int b){
       return res;
   }
 }
-static long decToBinary(unbounded_int a){
-  char * t = unbounded_int2string(a);
-  int c = atoi(t);
-  long bno=0,rem,f=1;
-   while(c != 0){
-      rem = c % 2;
-      bno = bno + rem * f;
-      f = f * 10;
-      c = c / 2;
-   }
-   return bno;
-}
+
 
 
 static long decToBinary(unbounded_int a){
@@ -464,8 +453,11 @@ static unbounded_int binarytodec(long a){
 }
 
 unbounded_int unbounded_int_quotient(unbounded_int a,unbounded_int b){
-  return binarytodec(
-    decToBinary(a) / decToBinary(b)
-  );
+    long f = decToBinary(a);
+    long h = decToBinary(b);
+ 
+    
+    
+  return binarytodec(f/h);
   }
 
