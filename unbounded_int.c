@@ -433,6 +433,20 @@ static long decToBinary(unbounded_int a){
 }
 
 
+static long decToBinary(unbounded_int a){
+  char * t = unbounded_int2string(a);
+  int c = atoi(t);
+  long bno=0,rem,f=1;
+   while(c != 0){
+      rem = c % 2;
+      bno = bno + rem * f;
+      f = f * 10;
+      c = c / 2;
+   }
+   return bno;
+}
+
+
 static unbounded_int binarytodec(long a){
  
    int dno = 0, i = 0, rem;
@@ -442,9 +456,9 @@ static unbounded_int binarytodec(long a){
       dno += rem * pow(2, i);
       ++i;
    
-}
- char t [100] ;
-   itoa(dno, t, 10);
+    }
+     char t [100] ;
+     sprintf(t, "%d", dno); 
    return string2unbounded_int(t);
 
 }
@@ -454,3 +468,4 @@ unbounded_int unbounded_int_quotient(unbounded_int a,unbounded_int b){
     decToBinary(a) / decToBinary(b)
   );
   }
+

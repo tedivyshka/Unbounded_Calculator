@@ -1,6 +1,5 @@
 #ifndef UNBOUNDED_INT
 #define UNBOUNDED_INT
-#include <stdlib.h>
 
 typedef struct chiffre{
   struct chiffre *suivant;
