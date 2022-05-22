@@ -118,6 +118,9 @@ static void execute_op(char* lvar, char* rvar1, char op, char* rvar2){
     case '-':
       value = unbounded_int_difference(leftUnbounded,rightUnbounded);
       break;
+    case '/':
+      value = unbounded_int_quotient(leftUnbounded,rightUnbounded);
+      break;
   }
 
   if(value.signe == '*'){
@@ -234,7 +237,7 @@ static void process_exp(char* buffer){
     return;
   }
 
-  if(strchr("+-*",*currentChar ) == NULL){
+  if(strchr("+-*/",*currentChar ) == NULL){
     exitError("Invalid character in assignment.");
   }
 
