@@ -136,7 +136,10 @@ static void execute_op(char* lvar, char* rvar1, char op, char* rvar2){
 static void assign_var(char* lvar, char* rvar){
   unbounded_int value = string2unbounded_int(rvar);
   if(value.signe == '*'){
-    exitError("Assign value error.");
+    var* rv = getVar(rvar);
+    if(rv == NULL)
+      exitError("Assign value error.");
+    value = rv->value;
   }
 
   var* v = getVar(lvar);

@@ -6,6 +6,10 @@
 #include<math.h>
 #include "unbounded_int.h"
 
+static void exitError(char *error){
+  printf("An error occurred: %s\n",error);
+  exit(EXIT_FAILURE);
+}
 
 
 unbounded_int string2unbounded_int(const char *e){
@@ -20,6 +24,9 @@ unbounded_int string2unbounded_int(const char *e){
   }
 
   chiffre* current = malloc(sizeof(chiffre));
+  if(current == NULL){
+    exitError("Malloc error.");
+  }
   current->c = e[count];
   if(!(e[count] >= '0' && e[count] <= '9'))
     res.signe = '*';
@@ -28,6 +35,9 @@ unbounded_int string2unbounded_int(const char *e){
 
   while(e[count] != '\0'){
     chiffre* next = malloc(sizeof(chiffre));
+    if(next == NULL){
+      exitError("Malloc error.");
+    }
     next->c = e[count];
     if(!(e[count] >= '0' && e[count] <= '9'))
       res.signe = '*';
@@ -48,6 +58,9 @@ unbounded_int ll2unbounded_int(long long i) {
     int count = 0;
 
     chiffre* current = malloc(sizeof(chiffre));
+    if(current == NULL){
+      exitError("Malloc error.");
+    }
     current->c = (char)((i%10) + '0');
     res.dernier = current;
     i = i/10;
@@ -55,6 +68,9 @@ unbounded_int ll2unbounded_int(long long i) {
 
     while(i != 0){
       chiffre* precedent = malloc(sizeof(chiffre));
+      if(precedent == NULL){
+        exitError("Malloc error.");
+      }
       precedent->c = (char)((i%10) + '0');
       current->precedent = precedent;
       precedent->suivant = current;
@@ -69,6 +85,9 @@ unbounded_int ll2unbounded_int(long long i) {
 
 char *unbounded_int2string(unbounded_int i){
   char* res = malloc(sizeof(char)*(i.len+1));
+  if(res == NULL){
+    exitError("Malloc error.");
+  }
   *res = i.signe;
   chiffre* current = i.premier;
   int count = sizeof(char);
@@ -191,6 +210,9 @@ static unbounded_int somme(unbounded_int a,unbounded_int b){
         }
 
         chiffre* current = malloc(sizeof(chiffre));
+        if(current == NULL){
+          exitError("Malloc error.");
+        }
         current->c = (m+n+r)%10 + '0';
         r=(m+n+r)/10;
 
@@ -199,6 +221,9 @@ static unbounded_int somme(unbounded_int a,unbounded_int b){
 
     if(r > 0){
         chiffre* current = malloc(sizeof(chiffre));
+        if(current == NULL){
+          exitError("Malloc error.");
+        }
         current->c = r + '0';
         ajoutDebut(&res, current);
     }
@@ -226,6 +251,9 @@ static unbounded_int diff(unbounded_int a,unbounded_int b){
         }
 
         chiffre* current = malloc(sizeof(chiffre));
+        if(current == NULL){
+          exitError("Malloc error.");
+        }
         int g=m-n+r;
         if(g>=0){
            current->c = (m-n+r)+ '0';
@@ -242,6 +270,9 @@ static unbounded_int diff(unbounded_int a,unbounded_int b){
 
     if(r > 0){
         chiffre* current = malloc(sizeof(chiffre));
+        if(current == NULL){
+          exitError("Malloc error.");
+        }
         current->c = r + '0';
         ajoutDebut(&res, current);
     }
@@ -366,6 +397,9 @@ unbounded_int unbounded_int_difference( unbounded_int a, unbounded_int b){
     }
 static chiffre * newChiffre(char c){
     chiffre* res = malloc(sizeof(chiffre));
+    if(res == NULL){
+      exitError("Malloc error.");
+    }
     res->c = c;
     return res;
 }
@@ -440,6 +474,9 @@ static unbounded_int divide_unbounded_int_by_2(unbounded_int a){
     if(!isdigit(*currentA))
       currentA++;
     char* currentB = malloc(sizeof(char)*b.len);
+    if(currentB == NULL){
+      exitError("Malloc error.");
+    }
     char* pointer = currentB;
     int reste = 0;
 
@@ -460,6 +497,9 @@ static unbounded_int divide_unbounded_int_by_2(unbounded_int a){
 static char* unbounded_int2binary(unbounded_int a){
   int place = 0;
   char* result = malloc(sizeof(char) * (1+floor(log(a.len))));
+  if(result == NULL){
+    exitError("Malloc error.");
+  }
   while(unbounded_int_cmp_ll(a,0) == 1){
     int r = (a.dernier->c - '0') % 2;
     result[place] = (char)(r+'0');
@@ -509,7 +549,10 @@ char* addBinary(char* a, char* b){
    sum[i++] = r;
   }
   --i;
-  char* resChar = malloc(sizeof(char)*1024);
+  char* resChar = malloc(sizeof(char)*i);
+  if(resChar == NULL){
+    exitError("Malloc error.");
+  }
   int count = 0;
   for(int j = i; j >=0; j-- ){
     resChar[count] = (char)(sum[j]+'0');
@@ -521,6 +564,9 @@ char* addBinary(char* a, char* b){
 
 char* twoComplement(char* a){
     char* res = malloc((strlen(a)+1)*sizeof(char));
+    if(res == NULL){
+      exitError("Malloc error.");
+    }
     char* pointer = res;
     while(*a != '\0'){
       if(*a == '0'){
