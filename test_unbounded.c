@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <limits.h>
 #include "unbounded_int.h"
-#include "unbounded_int.c"
 
 #define SAMPLE_SIZE 10000
 
@@ -181,7 +180,7 @@ static void testUIcmpLL(){
   printf("\n");
 }
 
-static void testquotient(){
+static void testQuotient(){
 
   int result = 0;
   for(int i = 0; i < SAMPLE_SIZE; i++){
@@ -212,19 +211,21 @@ static void testquotient(){
   printf("\n");
 
 }
-
+/*
 static void testBinaryConversions(){
     int result = 0;
     for(int j = 1; j <= SAMPLE_SIZE; j++){
         long long randLong = randomLongLong();
+        if (randLong < 0)
+          randLong *= -1;
         unbounded_int beforeUnb = ll2unbounded_int(randLong);
-        long long binary = decToBinary(beforeUnb);
-        unbounded_int afterUnb = binarytodec(binary);
+        char* binary = unbounded_int2binary(beforeUnb);
+        unbounded_int afterUnb = binary_2_unbounded_int(binary);
         if(unbounded_int_cmp_unbounded_int(beforeUnb,afterUnb) == 0){
           result += 1;
         }
         else{
-          printf("Conversion of: %lld \nReturned: %lld\n",randLong,unbounded_int2string(afterUnb));
+          printf("Conversion of: %lld \nReturned: %s\n",randLong,unbounded_int2string(afterUnb));
         }
     }
     if(result == SAMPLE_SIZE)
@@ -234,7 +235,7 @@ static void testBinaryConversions(){
       printf("\033[0m");
     printf("\n");
 }
-
+*/
 
 /*
 
@@ -277,8 +278,8 @@ static void test(){
   testSomme();
   testDifference();
   testProduit();
-  testquotient();
-  testBinaryConversions();
+  testQuotient();
+  //testBinaryConversions();
 }
 
 

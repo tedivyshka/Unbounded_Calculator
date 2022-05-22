@@ -3,7 +3,6 @@
 #include <string.h>
 #include <ctype.h>
 #include "unbounded_int.h"
-#include "unbounded_int.c"
 
 typedef struct variable{
   char* name;

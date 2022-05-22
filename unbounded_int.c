@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
+#include <ctype.h>
 #include<string.h>
 #include<math.h>
 #include "unbounded_int.h"
@@ -68,14 +68,16 @@ unbounded_int ll2unbounded_int(long long i) {
 }
 
 char *unbounded_int2string(unbounded_int i){
-  char* res = malloc(sizeof(char)*i.len);
+  char* res = malloc(sizeof(char)*(i.len+1));
   *res = i.signe;
   chiffre* current = i.premier;
   int count = sizeof(char);
-  while(current != NULL){
-    *(res + count) = current->c;
+  int len = i.len;
+  while(len > 0){
+    res[count] = current->c;
     count+=sizeof(char);
     current = current->suivant;
+    len--;
   }
   return res;
 }
@@ -431,43 +433,157 @@ unbounded_int unbounded_int_produit(unbounded_int a , unbounded_int b){
   return a;
 }
 
+static unbounded_int divide_unbounded_int_by_2(unbounded_int a){
+    unbounded_int b;
+    b.len = a.len;
+    char*  currentA = unbounded_int2string(a);
+    if(!isdigit(*currentA))
+      currentA++;
+    char* currentB = malloc(sizeof(char)*b.len);
+    char* pointer = currentB;
+    int reste = 0;
 
-
-static long long decToBinary(unbounded_int a){
-  char * t = unbounded_int2string(a);
-  int c = atoi(t);
-  long long bno=0,rem,f=1;
-   while(c != 0){
-      rem = c % 2;
-      bno = bno + rem * f;
-      f = f * 10;
-      c = c / 2;
-   }
-   return bno;
-}
-
-
-static unbounded_int binarytodec(long a){
-
-   int dno = 0, i = 0, rem;
-   while (a != 0) {
-      rem = a % 10;
-      a /= 10;
-      dno += rem * pow(2, i);
-      ++i;
-
+    while(*currentA != '\0'){
+      *currentB = (char)(((*currentA - '0')/2 + reste)+'0');
+      if ((*currentA - '0') % 2 == 1){
+        reste = 5;
+      }
+      else{
+        reste = 0;
+      }
+      currentA++;
+      currentB++;
     }
-     char t [100] ;
-     sprintf(t, "%d", dno);
-   return string2unbounded_int(t);
-
+    return Vrai_unbounded(string2unbounded_int(pointer));
 }
+
+static char* unbounded_int2binary(unbounded_int a){
+  int place = 0;
+  char* result = malloc(sizeof(char) * (1+floor(log(a.len))));
+  while(unbounded_int_cmp_ll(a,0) == 1){
+    int r = (a.dernier->c - '0') % 2;
+    result[place] = (char)(r+'0');
+    place++;
+    a = divide_unbounded_int_by_2(a);
+  }
+  result[place] = '\0';
+  int n = strlen(result);
+  for (int i = 0; i <  n / 2; i++)
+  {
+    char ch = result[i];
+    result[i] = result[n - i - 1];
+    result[n - i - 1] = ch;
+  }
+
+
+  return result;
+}
+
+static unbounded_int binary_2_unbounded_int(char* a){
+  int i = 0, r = 0;
+  long long result = 0;
+  char* current = a;
+  while(*current != '\0'){
+    r = (*current-'0') % 10;
+    result += r * pow(2,strlen(a)-i-1);
+    current++;
+    i++;
+  }
+  unbounded_int resultUnbounded = ll2unbounded_int(result);
+  return resultUnbounded;
+}
+
+char* addBinary(char* a, char* b){
+  long long bn1 = atoll(a);
+  long long bn2 = atoll(b);
+	long long sum[1024];
+  int i = 0, r = 0;
+  while (bn1 != 0 || bn2 != 0)
+  {
+   sum[i++] = (int)((bn1 % 10 + bn2 % 10 + r) % 2);
+   r = (int)((bn1 % 10 + bn2 % 10 + r) / 2);
+   bn1 = bn1 / 10;
+   bn2 = bn2 / 10;
+  }
+  if (r != 0) {
+   sum[i++] = r;
+  }
+  --i;
+  char* resChar = malloc(sizeof(char)*1024);
+  int count = 0;
+  for(int j = i; j >=0; j-- ){
+    resChar[count] = (char)(sum[j]+'0');
+    count++;
+  }
+  return resChar;
+}
+
+
+char* twoComplement(char* a){
+    char* res = malloc((strlen(a)+1)*sizeof(char));
+    char* pointer = res;
+    while(*a != '\0'){
+      if(*a == '0'){
+        *res = '1';
+      }
+      else{
+        *res = '0';
+      }
+      res++;
+      a++;
+    }
+    return addBinary(pointer,"1");
+}
+
+char* substract_binary(char* a,char* b){
+  int lenA = strlen(a), lenB = strlen(b);
+  char newB[lenA];
+  for( int i = 0; i < lenA-lenB; i++){
+    newB[i] = '0';
+  }
+  for(int i = lenA-lenB; i < lenA; i++){
+    newB[i] = b[i - lenA+lenB];
+  }
+  newB[lenA] = '\0';
+  char* bComplement = twoComplement(newB);
+  char* res = addBinary(a,bComplement);
+  res++;
+  while(*res == '0')
+    res++;
+  if(strlen(res) == 0){
+    res = "0";
+  }
+  return res;
+}
+
+
 
 unbounded_int unbounded_int_quotient(unbounded_int a,unbounded_int b){
-    long long f = decToBinary(a);
-    long long h = decToBinary(b);
+    unbounded_int res ;
+    if(a.signe != b.signe){
+      res.signe = '-';
+      a.signe = '+';
+      b.signe = '+';
+    }else{
+      res.signe = '-';
+      a.signe = '+';
+      b.signe = '+';
+    }
+    if(unbounded_int_cmp_unbounded_int(a,b) == 0){
+      res = ll2unbounded_int(1);
+      return res;
+    }
+    char* binaryA = unbounded_int2binary(a);
+    char* binaryB = unbounded_int2binary(b);
 
+    char* resChar = "0";
+    while(strcmp(binaryA,"0") != 0){
+      if (strlen(binaryB) > strlen(binaryA) || atoll(binaryB) > atoll(binaryA))
+        break;
+      resChar = addBinary(resChar,"1");
+      char* newBinaryA = substract_binary(binaryA,binaryB);
+      binaryA = newBinaryA;
+    }
 
-
-  return binarytodec(f/h);
-  }
+    return Vrai_unbounded(binary_2_unbounded_int(resChar));
+}
