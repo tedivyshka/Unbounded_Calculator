@@ -260,7 +260,7 @@ static unbounded_int Vrai_unbounded(unbounded_int a){
   }
   return a;
 }
-
+//le plus grand unboud entre a et b
 static int Max(unbounded_int a,unbounded_int b){
 
   if(a.len<b.len){
@@ -330,6 +330,7 @@ unbounded_int unbounded_int_difference( unbounded_int a, unbounded_int b){
                  unbounded_int c=diff(b,a);
                  c.signe='-';
                  return Vrai_unbounded(c);
+                 //return c;
             }
 
         }
@@ -338,10 +339,12 @@ unbounded_int unbounded_int_difference( unbounded_int a, unbounded_int b){
                unbounded_int c=diff(a,b);
                  c.signe='-';
                   return Vrai_unbounded(c);
+                 //return c;
             }else{
                  unbounded_int c=diff(b,a);
                  c.signe='+';
                   return Vrai_unbounded(c);
+                 //return c;
             }
         }
         if(a.signe=='+' && b.signe=='-'){
@@ -414,7 +417,6 @@ static unbounded_int multiplication(unbounded_int a,unbounded_int b){
 
     return res;
 }
-
 unbounded_int unbounded_int_produit(unbounded_int a , unbounded_int b){
   if((a.signe=='+' && b.signe=='+') || (a.signe=='-' && b.signe=='-')){
       return multiplication(a,b);
@@ -491,7 +493,7 @@ static unbounded_int binary_2_unbounded_int(char* a){
   return resultUnbounded;
 }
 
-static char* addBinary(char* a, char* b){
+char* addBinary(char* a, char* b){
   long long bn1 = atoll(a);
   long long bn2 = atoll(b);
 	long long sum[1024];
@@ -517,7 +519,7 @@ static char* addBinary(char* a, char* b){
 }
 
 
-static char* twoComplement(char* a){
+char* twoComplement(char* a){
     char* res = malloc((strlen(a)+1)*sizeof(char));
     char* pointer = res;
     while(*a != '\0'){
@@ -533,7 +535,7 @@ static char* twoComplement(char* a){
     return addBinary(pointer,"1");
 }
 
-static char* substract_binary(char* a,char* b){
+char* substract_binary(char* a,char* b){
   int lenA = strlen(a), lenB = strlen(b);
   char newB[lenA];
   for( int i = 0; i < lenA-lenB; i++){
@@ -557,10 +559,6 @@ static char* substract_binary(char* a,char* b){
 
 
 unbounded_int unbounded_int_quotient(unbounded_int a,unbounded_int b){
-    if(unbounded_int_cmp_ll(b,0) == 0){
-      printf("An error occurred: Division by 0\n");
-      exit(EXIT_FAILURE);
-    }
     unbounded_int res ;
     if(a.signe != b.signe){
       res.signe = '-';

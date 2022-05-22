@@ -65,6 +65,9 @@ static void addToList(char* name, unbounded_int val){
   if(tabLen+1 >= tabCapacity){
     tabCapacity*=2;
     list = realloc(list,sizeof(var)*tabCapacity);
+    if(list == NULL){
+      exitError("Realloc fail.");
+    }
   }
   var temp;
   temp.value = val;
@@ -193,6 +196,9 @@ static void process_exp(char* buffer){
   }
   lvar[i] = '\0';
   lvar = realloc(lvar, sizeof(char) * (strlen(lvar)+1));
+  if(lvar == NULL){
+    exitError("Realloc fail.");
+  }
 
 
   while(isspace(*currentChar)){
@@ -219,7 +225,9 @@ static void process_exp(char* buffer){
   }
   rvar1[i] = '\0';
   rvar1 = realloc(rvar1, sizeof(char) * (strlen(rvar1)+1));
-
+  if(rvar1 == NULL){
+    exitError("Realloc fail.");
+  }
 
   i = 0;
   while(*currentChar != '\0'){
@@ -270,6 +278,10 @@ static void process_exp(char* buffer){
   }
   rvar2[i] = '\0';
   rvar2 = realloc(rvar2, sizeof(char) * (strlen(rvar2)+1));
+  if(rvar2 == NULL){
+    exitError("Realloc fail.");
+  }
+
   while(*currentChar != '\0'){
     if(isspace(*currentChar)){
       currentChar++;
@@ -320,6 +332,9 @@ void process_print(const char *ligne, FILE *output) {
     exitError("Illegal character in print.");
   }
   var=realloc(var,(strLength+1)*sizeof(char));
+  if(var == NULL){
+    exitError("Realloc fail.");
+  }
   *(var+strLength) = '\0';
 
   char* stringOutput;
