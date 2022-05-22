@@ -10,7 +10,7 @@
 
 static long long randomLongLong(){
   int length = (random() % 18) + 1;
-  long long r = ((long long)random() << 25) + random();
+  long long r = ((long long)random() << 32) + random();
   for(int i = 0; i < length; i++) r /= 10;
   if(random() % 2 == 0) r *= -1;
   return r;
