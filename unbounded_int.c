@@ -125,7 +125,7 @@ int unbounded_int_cmp_ll(unbounded_int a, long long b) {
     return -1;
 
   long long temp = b;
-  int nbDigits_b = 0;
+  int nbDigits_b = (temp==0)?1:0;
   while(temp!=0){
      temp=temp/10;
      nbDigits_b++;
@@ -142,7 +142,6 @@ int unbounded_int_cmp_ll(unbounded_int a, long long b) {
   long long b_current = (b<0)?-b:b;
 
   int res = 0;
-
   while(a_current != NULL){
     if(a_current->c-'0' > b_current%10){
       res = (a.signe=='-')?-1:1;
@@ -173,7 +172,7 @@ static unbounded_int somme(unbounded_int a,unbounded_int b){
     unbounded_int res;
     res.len = 0;
     res.signe = '+';
-    int len = 0, r = 0;
+    int r = 0;
 
     chiffre * tmp1=a.dernier;
     chiffre * tmp2=b.dernier;
@@ -208,7 +207,7 @@ static unbounded_int diff(unbounded_int a,unbounded_int b){
     unbounded_int res;
     res.len = 0;
     res.signe = '+';
-    int len = 0, r = 0;
+    int r = 0;
 
     chiffre * tmp1=a.dernier;
     chiffre * tmp2=b.dernier;
@@ -259,7 +258,7 @@ static unbounded_int Vrai_unbounded(unbounded_int a){
   }
   return a;
 }
-//le plus grand unboud entre a et b 
+//le plus grand unboud entre a et b
 static int Max(unbounded_int a,unbounded_int b){
 
   if(a.len<b.len){
@@ -315,8 +314,11 @@ unbounded_int unbounded_int_somme(unbounded_int a, unbounded_int b){
         }else{
           return Vrai_unbounded(diff(b,a));
         }
-
       }
+      if(a.signe == '*'){
+        return b;
+      }
+      return a;
 }
 unbounded_int unbounded_int_difference( unbounded_int a, unbounded_int b){
         if(a.signe=='+' && b.signe=='+'){
@@ -352,8 +354,12 @@ unbounded_int unbounded_int_difference( unbounded_int a, unbounded_int b){
             unbounded_int c=somme(a,b);
             c.signe='-';
           return Vrai_unbounded(c);
-
         }
+
+        if(a.signe == '*'){
+          return b;
+        }
+        return a;
 
     }
 static chiffre * newChiffre(char c){
@@ -418,14 +424,19 @@ unbounded_int unbounded_int_produit(unbounded_int a , unbounded_int b){
       res.signe='-';
       return res;
   }
+
+  if(a.signe == '*'){
+    return b;
+  }
+  return a;
 }
 
 
 
-static long decToBinary(unbounded_int a){
+static long long decToBinary(unbounded_int a){
   char * t = unbounded_int2string(a);
   int c = atoi(t);
-  long bno=0,rem,f=1;
+  long long bno=0,rem,f=1;
    while(c != 0){
       rem = c % 2;
       bno = bno + rem * f;
@@ -437,27 +448,26 @@ static long decToBinary(unbounded_int a){
 
 
 static unbounded_int binarytodec(long a){
- 
+
    int dno = 0, i = 0, rem;
    while (a != 0) {
       rem = a % 10;
       a /= 10;
       dno += rem * pow(2, i);
       ++i;
-   
+
     }
      char t [100] ;
-     sprintf(t, "%d", dno); 
+     sprintf(t, "%d", dno);
    return string2unbounded_int(t);
 
 }
 
 unbounded_int unbounded_int_quotient(unbounded_int a,unbounded_int b){
-    long f = decToBinary(a);
-    long h = decToBinary(b);
- 
-    
-    
+    long long f = decToBinary(a);
+    long long h = decToBinary(b);
+
+
+
   return binarytodec(f/h);
   }
-

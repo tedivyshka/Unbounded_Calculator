@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include "unbounded_int.h"
+#include "unbounded_int.c"
 
 #define SAMPLE_SIZE 10000
 
@@ -181,17 +182,89 @@ static void testUIcmpLL(){
 }
 
 static void testquotient(){
-   
-        unbounded_int a=string2unbounded_int("500");
-        unbounded_int b=string2unbounded_int("2");
-        printf("division de 500 et 2 = %s",unbounded_int2string(unbounded_int_quotient(a,b)));
-        unbounded_int c=string2unbounded_int("100");
-        unbounded_int d=string2unbounded_int("50");
-        printf("division de 100 et 50 = %s",unbounded_int2string(unbounded_int_quotient(c,d)));
-        printf("division de 500 et 100 = %s",unbounded_int2string(unbounded_int_quotient(a,c)));
-      
-    
+
+  int result = 0;
+  for(int i = 0; i < SAMPLE_SIZE; i++){
+    long long a = random()%1024;
+    unbounded_int u1 = ll2unbounded_int(a);
+
+    long long b = random()%1024;
+    while (b == 0){
+       b = random()%1024;
+    }
+    unbounded_int u2 = ll2unbounded_int(b);
+
+    long long expectedLong = a / b;
+    unbounded_int returnedUI = unbounded_int_quotient(u1,u2);
+    long long returnedLong = atoll(unbounded_int2string(returnedUI));
+
+    if(expectedLong == returnedLong){
+        result += 1;
+    }else{
+      printf("Quotient of: %lld and %lld\nExpected: %lld\nReturned: %lld\n",a,b,expectedLong,returnedLong);
+    }
+  }
+  if(result == SAMPLE_SIZE)
+    printf("\033[0;32m");
+  printf("Correct answers for quotient test : %d/%d\n",result,SAMPLE_SIZE);
+  if(result == SAMPLE_SIZE)
+    printf("\033[0m");
+  printf("\n");
+
 }
+
+static void testBinaryConversions(){
+    int result = 0;
+    for(int j = 1; j <= SAMPLE_SIZE; j++){
+        long long randLong = randomLongLong();
+        unbounded_int beforeUnb = ll2unbounded_int(randLong);
+        long long binary = decToBinary(beforeUnb);
+        unbounded_int afterUnb = binarytodec(binary);
+        if(unbounded_int_cmp_unbounded_int(beforeUnb,afterUnb) == 0){
+          result += 1;
+        }
+        else{
+          printf("Conversion of: %lld \nReturned: %lld\n",randLong,unbounded_int2string(afterUnb));
+        }
+    }
+    if(result == SAMPLE_SIZE)
+      printf("\033[0;32m");
+    printf("Conversion from unb to binary to unb : %d / %d \n", result,SAMPLE_SIZE);
+    if(result == SAMPLE_SIZE)
+      printf("\033[0m");
+    printf("\n");
+}
+
+
+/*
+
+  int result = 0;
+  for(int i = 0; i < SAMPLE_SIZE; i++){
+    long long a = random()%1024;
+    unbounded_int u1 = ll2unbounded_int(a);
+
+    long long b = random()%1024;
+    unbounded_int u2 = ll2unbounded_int(b);
+
+    long long expectedLong = a / b;
+    unbounded_int returnedUI = unbounded_int_quotient(u1,u2);
+    long long returnedLong = atoll(unbounded_int2string(returnedUI));
+
+    if(expectedLong == returnedLong){
+        result += 1;
+    }else{
+      printf("Quotient of: %lld and %lld\nExpected: %lld\nReturned: %lld\n",a,b,expectedLong,returnedLong);
+    }
+  }
+  if(result == SAMPLE_SIZE)
+    printf("\033[0;32m");
+  printf("Correct answers for product test : %d/%d\n",result,SAMPLE_SIZE);
+  if(result == SAMPLE_SIZE)
+    printf("\033[0m");
+  printf("\n");
+
+
+*/
 
 static void test(){
   printf("Initializing tests.\n\n");
@@ -205,11 +278,12 @@ static void test(){
   testDifference();
   testProduit();
   testquotient();
+  testBinaryConversions();
 }
 
 
 int main(){
-   
+
 
     test();
     return 0;

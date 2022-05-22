@@ -124,7 +124,6 @@ static void execute_op(char* lvar, char* rvar1, char op, char* rvar2){
   if(value.signe == '*'){
     exitError("Assign value error.");
   }
-
   if(v == NULL){
       addToList(lvar,value);
   }else{
@@ -321,7 +320,7 @@ void process_print(const char *ligne, FILE *output) {
   char* stringOutput;
   if(getVar(var)!=NULL){
       char* tmpVarValeur=unbounded_int2string(getVar(var)->value);
-      stringOutput=malloc(sizeof(char)*(strlen(tmpVarValeur)+strlen(getVar(var)->name)+5));
+      stringOutput=malloc(sizeof(char)*(strlen(tmpVarValeur)+strlen(getVar(var)->name)+4));
       if(stringOutput == NULL){
         exitError("Malloc error.");
       }
